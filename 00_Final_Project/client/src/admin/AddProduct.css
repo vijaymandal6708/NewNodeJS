@@ -1,0 +1,101 @@
+:root {
+  --primary: #5b21b6;
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+/* Page */
+.add-product-page {
+  background: var(--bg);
+  min-height: 100vh;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  color: var(--text);
+  margin-top: "-20px";
+}
+
+/* Form */
+.product-form {
+  background: var(--card);
+  padding: 50px;
+  border-radius: 16px;
+  max-width: 900px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* Grid */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+/* Form group */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+}
+
+/* Full width fields */
+.full-width {
+  margin-top: 20px;
+}
+
+/* Button */
+.submit-btn {
+  margin-top: 30px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover {
+  background: #4c1d95;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .add-product-page {
+    padding: 20px;
+  }
+}
