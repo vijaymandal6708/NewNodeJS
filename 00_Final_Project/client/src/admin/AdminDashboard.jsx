@@ -45,64 +45,32 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  /* ================= AUTH CHECK ================= */
-
   useEffect(() => {
-    const checkAdminAuth = async () => {
-      const token = localStorage.getItem("token");
+  const fetchStats = async () => {
+    const admintoken = localStorage.getItem("admintoken");
+    if (!admintoken) {
+      navigate("/login");
+      return;
+    }
 
-      if (!token) {
-        navigate("/login");
-        return;
+    const res = await axios.get(
+      "http://localhost:8000/admin/dashboard-stats",
+      {
+        headers: {
+          Authorization: `Bearer ${admintoken}`,
+        },
       }
+    );
 
-      try {
-        const res = await axios.get(
-          "http://localhost:8000/user/verify-token",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+    setStats(res.data.stats);
+    setLoading(false);
+  };
 
-        if (res.data.role !== "admin") {
-          navigate("/unauthorized");
-        }
-      } catch (err) {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
-    };
+  fetchStats();
+}, []);
 
-    checkAdminAuth();
-  }, []);
 
-  /* ================= FETCH DASHBOARD DATA ================= */
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(
-          "http://localhost:8000/admin/dashboard-stats",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        setStats(res.data.stats);
-      } catch (err) {
-        if (err.response?.status === 401) navigate("/login");
-        if (err.response?.status === 403) navigate("/unauthorized");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
-  }, []);
-
-  /* ================= SAFE DATA ================= */
+  /*============== SAFE DATA ================= */
 
   const productCategoryData = CATEGORY_ORDER.map((cat) => {
     const found = stats?.productCategories?.find(

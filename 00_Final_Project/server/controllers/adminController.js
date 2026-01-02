@@ -8,15 +8,27 @@ const jwt = require("jsonwebtoken");
 
 // Set up Cloudinary storage for multer
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
+  cloudinary,
   params: {
-    folder: "product_images", // folder name Cloudinary account
-    format: async (req, file) => "jpg", // supports promises as well
-    public_id: (req, file) => Date.now() + "-" + file.originalname,
+    folder: "product_images",
+    resource_type: "image",
+
+    // ✅ force all images to JPG (fixes HEIC / PNG issues)
+    format: "jpg",
+
+    public_id: (req, file) =>
+      Date.now() + "-" + file.originalname.replace(/\s+/g, "_"),
   },
 });
 
-const upload = multer({ storage: storage }).array("images", 10); //image size
+/* ================= MULTER ================= */
+const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB per image
+  },
+}).array("images", 10);
+
 
 const adminLogin = async (req, res) => {
   try {
@@ -64,37 +76,51 @@ const adminLogin = async (req, res) => {
 module.exports = adminLogin;
 
 const addProduct = async (req, res) => {
-  console.log(req.body);
-
   upload(req, res, async (err) => {
     if (err) {
-      return res.status(500).send("Error uploading files: " + err.message);
+      console.error("❌ MULTER / CLOUDINARY ERROR FULL:", err);
+  console.error("❌ ERROR NAME:", err.name);
+  console.error("❌ ERROR MESSAGE:", err.message);
+  console.error("❌ ERROR CODE:", err.http_code);
+      console.error("UPLOAD ERROR:", err);
+      return res.status(500).json({
+        msg: "Image upload failed",
+        error: err.message,
+      });
     }
+
     try {
-      const { name, category, MRP, price, quantity, starRating, description } =
-        req.body;
       const imageUrls =
         req.files && req.files.length > 0
           ? req.files.map((file) => file.path)
           : [];
+
       const product = await ProductModel.create({
-        name: name,
-        category: category,
-        MRP: MRP,
-        price: price,
-        quantity: quantity,
-        starRating: starRating,
-        description: description,
-        defaultImage: imageUrls[0],
+        name: req.body.name,
+        category: req.body.category.toLowerCase(),
+        MRP: req.body.MRP,
+        price: req.body.price,
+        quantity: req.body.quantity,
+        starRating: Number(req.body.starRating),
+        description: req.body.description,
+        defaultImage: imageUrls[0] || "",
         images: imageUrls,
       });
 
-      res.status(200).send("Data saved successfully!");
+      res.status(200).json({
+        success: true,
+        product,
+      });
     } catch (error) {
-      res.status(500).send("Error saving data: " + error.message);
+      console.error("SAVE PRODUCT ERROR:", error);
+      res.status(500).json({
+        msg: "Product save failed",
+        error: error.message,
+      });
     }
   });
 };
+
 
 const getDashboardStats = async (req, res) => {
   try {

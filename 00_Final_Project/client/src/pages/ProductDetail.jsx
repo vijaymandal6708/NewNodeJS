@@ -1,21 +1,26 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const ProductDetail = () => {
   const [data, setData] = useState({});
   const [activeImage, setActiveImage] = useState("");
+  const {id} = useParams();
 
   const loadData = async () => {
+    console.log(id);
     const response = await axios.get(
-      `${import.meta.env.VITE_BACKENDURL}/product/product-detail`
+      `${import.meta.env.VITE_BACKENDURL}/product/${id}`
     );
     setData(response.data);
     setActiveImage(response.data.defaultImage);
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if(id){
+      loadData();
+    }
+  }, [id]);
 
   const starRating = parseFloat(data.starRating) || 0;
 

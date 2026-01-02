@@ -152,7 +152,7 @@ const Home = () => {
 
         .add-cart-btn {
           width: 100%;
-          background: linear-gradient(135deg, #0a122eff, #04145fff);
+          background: linear-gradient(135deg, #020718ff, #131a3bff);
           border: none;
           color: white;
           padding: 10px 0;

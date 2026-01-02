@@ -6,9 +6,15 @@ const productDisplay = async (req,res) => {
 }
 
 const productDetail = async (req,res) => {
-  const productdetail = await ProductModel.findOne();
-  console.log(productdetail);
-  res.send(productdetail);
+  console.log("REQ ID:", req.params.id);
+
+  const product = await ProductModel.findById(req.params.id);
+
+  if (!product) {
+    return res.status(404).json({ msg: "Product not found" });
+  }
+
+  res.json(product);
 }
 
 module.exports = {
