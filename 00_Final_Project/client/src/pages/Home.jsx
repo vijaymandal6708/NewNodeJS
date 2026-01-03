@@ -176,15 +176,26 @@ const Home = () => {
         }
 
         .section-header h2 {
-          font-size: 32px;
-          font-weight: 700;
+          font-size: 28px;
+          font-weight: bold;
           color: #222;
           margin-bottom: 4px;
+          /* subtle tilt (less than italic) */
+          transform: skewX(-6deg);
+
+          /* 👇 stronger, visible shadow */
+           text-shadow:
+          1px 1px 0 rgba(0,0,0,0.25),
+          2px 3px 6px rgba(0,0,0,0.35);
+
+          letter-spacing: 0.6px;
         }
 
         .section-header p {
           font-size: 14px;
           color: #666;
+          /* subtle tilt (less than italic) */
+          transform: skewX(-6deg);
         }
 
         @media (max-width: 1200px) {

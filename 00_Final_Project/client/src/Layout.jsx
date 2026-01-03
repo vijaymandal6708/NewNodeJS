@@ -1,18 +1,21 @@
-import React from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { Outlet } from 'react-router-dom'
+import React from "react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
     <>
-      <Header></Header>
+      <Header />
 
-      <Outlet></Outlet>
+      {/* MAIN CONTENT OFFSET */}
+      <div style={{ marginTop: "135px" }}>
+        <Outlet />
+      </div>
 
-      <Footer></Footer>
+      <Footer />
     </>
-  )
-}
+  );
+};
 
-export default Layout
+export default Layout;

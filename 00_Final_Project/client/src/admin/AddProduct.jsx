@@ -45,9 +45,9 @@ const AddProduct = () => {
         }
       );
 
-      toast.success("✅ Product added successfully");
+      toast.success("Product added successfully");
     } catch (error) {
-      toast.error(error.response?.data?.msg || "❌ Add product failed");
+      toast.error(error.response?.data?.msg || "Add product failed");
     }
   };
 
@@ -199,10 +199,9 @@ const AddProduct = () => {
               <select name="category" onChange={handleInput} required>
                 <option value="">Select category</option>
                 <option>Smartphone</option>
-                <option>Camera</option>
-                <option>Laptop</option>
+                <option>Laptop</option> 
                 <option>Speaker</option>
-                <option>SmartTV</option>
+                <option>Camera</option>
               </select>
             </div>
 

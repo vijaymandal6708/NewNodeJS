@@ -3,266 +3,284 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 const ProductDetail = () => {
+  const { id } = useParams();
+
   const [data, setData] = useState({});
   const [activeImage, setActiveImage] = useState("");
-  const {id} = useParams();
-
-  const loadData = async () => {
-    console.log(id);
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKENDURL}/product/${id}`
-    );
-    setData(response.data);
-    setActiveImage(response.data.defaultImage);
-  };
+  const [hover, setHover] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
-    if(id){
-      loadData();
-    }
+    if (!id) return;
+
+    const fetchProduct = async () => {
+      const res = await axios.get(
+        `${import.meta.env.VITE_BACKENDURL}/product/${id}`
+      );
+      setData(res.data);
+      setActiveImage(res.data.defaultImage);
+    };
+
+    fetchProduct();
   }, [id]);
 
-  const starRating = parseFloat(data.starRating) || 0;
+  const handleMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPos({ x, y });
+  };
+
+  const starRating = Number(data.starRating) || 0;
 
   return (
-    <div
-      className="main-container"
-      style={{ padding: "30px 70px", height: "83vh", width: "100vw" }}
-    >
-      <div
-        className="detail-container"
-        style={{
-          background: "white",
-          minHeight: "78vh",
-          borderRadius: "25px",
-          padding: "25px 60px",
-          display: "flex",
-        }}
-      >
-        <div
-          className="image-container"
-          style={{
-            height: "520px",
-            width: "37vw",
-            display: "flex",
-          }}
-        >
-          <div className="thumb" style={{ height: "520px", width: "22%",paddingTop:"20px",paddingRight:"15px",paddingLeft:"15px"}}>
-            {data.images?.map((img, index) => (
-              <img
-                key={index}
-                src={img}
-                onClick={() => setActiveImage(img)}
+    <>
+      {/* ================= CSS ================= */}
+      <style>{`
+        body {
+          background: #f4f6f8;
+        }
+
+        .product-page {
+          width: 100%;
+          padding: 40px 80px;
+        }
+
+        .product-container {
+          background: #fff;
+          border-radius: 28px;
+          padding: 50px;
+          display: flex;
+          gap: 60px;
+          position: relative;
+        }
+
+        /* ===== IMAGE AREA ===== */
+        .image-zone {
+          display: flex;
+          gap: 38px;
+          position: relative;
+        }
+
+        /* LEFT BANNER */
+        .thumbs {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
+        .thumbs img {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 14px;
+          border: 1px solid #ddd;
+          cursor: pointer;
+          background: #fff;
+          padding: 7px;
+        }
+
+        .thumbs img.active {
+          border: 2px solid #5f23c6;
+        }
+
+        /* MAIN IMAGE */
+        .image-box {
+          width: 420px;
+          height: 420px;
+          background: #f2f3f5;
+          border-radius: 26px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: zoom-in;
+          overflow: hidden;
+        }
+
+        .image-box img {
+          max-width: 90%;
+          max-height: 90%;
+          object-fit: contain;
+        }
+
+        /* ZOOM OVERLAY */
+        .zoom-overlay {
+          position: absolute;
+          top: -60px;
+          left: 618px;
+          width: 645px;
+          height: 530px;
+          background-repeat: no-repeat;
+          background-size: 160%;
+          background-color: #fff;
+          border-radius: 26px;
+          border: 1px solid #ddd;
+          box-shadow: 0 35px 80px rgba(0,0,0,0.35);
+          z-index: 999;
+        }
+
+        /* ===== DETAILS ===== */
+        .details {
+          flex: 1;
+          padding-left: 20px;
+        }
+
+        .details h1 {
+          font-size: 34px;
+          font-weight: 700;
+          margin-bottom: 12px;
+        }
+
+        .rating {
+          color: #f5b301;
+          font-size: 18px;
+          margin-bottom: 14px;
+        }
+
+        .rating span {
+          color: #333;
+          font-size: 14px;
+          margin-left: 10px;
+        }
+
+        .price {
+          display: flex;
+          gap: 18px;
+          align-items: center;
+          margin-bottom: 18px;
+        }
+
+        .price .sell {
+          font-size: 26px;
+          font-weight: 700;
+          color: #5f23c6;
+        }
+
+        .price .mrp {
+          text-decoration: line-through;
+          color: #777;
+        }
+
+        .offer {
+          color: #1a7f37;
+          font-weight: 600;
+          font-size: 14px;
+        }
+
+        .desc {
+          font-size: 17px;
+          color: #444;
+          margin-bottom: 20px;
+          line-height: 1.6;
+        }
+
+        .meta {
+          font-size: 14px;
+          color: #2f7a42;
+          margin-bottom: 8px;
+          font-weight: 600;
+        }
+
+        .meta-muted {
+          font-size: 14px;
+          color: #666;
+          margin-bottom: 26px;
+        }
+
+        .actions {
+          display: flex;
+          gap: 22px;
+        }
+
+        .btn {
+          flex: 1;
+          height: 48px;
+          border-radius: 16px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .cart {
+          background: #5f23c6;
+          color: #fff;
+          border: none;
+        }
+
+        .buy {
+          background: #0f172a;
+          color: #fff;
+          border: none;
+        }
+      `}</style>
+
+      {/* ================= UI ================= */}
+      <div className="product-page">
+        <div className="product-container">
+          {/* IMAGE + ZOOM */}
+          <div className="image-zone">
+            <div className="thumbs">
+              {data.images?.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  className={activeImage === img ? "active" : ""}
+                  onClick={() => setActiveImage(img)}
+                />
+              ))}
+            </div>
+
+            <div
+              className="image-box"
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              onMouseMove={handleMove}
+            >
+              <img src={activeImage} alt={data.name} />
+            </div>
+
+            {hover && (
+              <div
+                className="zoom-overlay"
                 style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "cover",
-                  marginBottom: "20px",
-                  cursor: "pointer",
-                  border:
-                    activeImage === img
-                      ? "2px solid rgba(95,35,198,1)"
-                      : "1px solid lightgrey",
-                  borderRadius: "8px",
+                  backgroundImage: `url(${activeImage})`,
+                  backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
                 }}
               />
-            ))}
-          </div>
-          <div
-            className="main-image"
-            style={{
-              height: "519px",
-              width: "78%",
-              padding: "50px 20px",
-              background: "rgba(0, 0, 0, 0.07)",
-              border: "8px solid white",
-              boxSizing: "border-box",
-              borderRadius: "30px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <img
-              src={activeImage}
-              style={{
-                maxHeight: "100%",
-                maxWidth: "100%",
-                objectFit: "cover",
-              }}
-            />
-          </div>
-        </div>
-        <div
-          className="description"
-          style={{
-            height: "520px",
-            width: "48vw",
-            paddingTop: "30px",
-            paddingBottom: "30px",
-            paddingLeft: "60px",
-            paddingRight: "10px",
-          }}
-        >
-          <h2 style={{ fontWeight: "bolder", fontSize: "34px" }}>
-            {data.name}
-          </h2>
-          <div
-            className="rating"
-            style={{
-              color: "rgba(237, 184, 48, 1)",
-              fontSize: "18px",
-              margin: "15px",
-            }}
-          >
-            {"★".repeat(Math.floor(starRating))}
-            {starRating % 1 >= 0.5 && "⯪"}
-            {"☆".repeat(
-              5 - Math.floor(starRating) - (starRating % 1 >= 0.5 ? 1 : 0)
             )}
-            <span
-              style={{ marginLeft: "15px", color: "black", fontSize: "14px" }}
-            >
-              {starRating} stars
-            </span>
           </div>
-          <div
-            className="price"
-            style={{
-              height: "30px",
-              width: "500px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "left",
-              marginBottom: "25px",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "22px",
-                fontWeight: "700",
-                color: "rgba(95, 35, 198, 1)",
-              }}
-            >
-              ₹{data.price}
-            </span>
-            <span
-              style={{
-                marginLeft: "20px",
-                fontSize: "17px",
-                textDecoration: "line-through",
-              }}
-            >
-              ₹{data.MRP}
-            </span>
-            <span
-              style={{
-                marginLeft: "20px",
-                fontSize: "15px",
-                color: "rgba(34, 126, 66, 1)",
-                fontWeight: "bolder",
-              }}
-            >
-              30% OFF
-            </span>
-          </div>
-          <div
-            className="description"
-            style={{ wordSpacing: "0.3px", marginBottom: "20px" }}
-          >
-            {data.description}
-          </div>
-          <p
-            style={{
-              color: "rgba(34, 126, 66, 1)",
-              fontSize: "14px",
-              fontWeight: "600",
-              marginBottom: "5px",
-              marginLeft: "5px",
-            }}
-          >
-            ✔ In stock • Free delivery • Easy returns
-          </p>
-          <p
-            style={{
-              color: "rgba(80, 80, 80, 1)",
-              fontSize: "14px",
-              marginLeft: "3px",
-              marginBottom: "25px",
-            }}
-          >
-            🛡 1-year warranty • Secure payments • 7-day replacement
-          </p>
 
-          <div
-            className="quantity"
-            style={{ marginBottom: "30px", marginLeft: "20px" }}
-          >
-            <button
-              style={{
-                padding: "3px 13px",
-                marginRight: "15px",
-                borderRadius: "5px",
-                paddingBottom: "5px",
-                border: "1px solid lightgrey",
-              }}
-            >
-              -
-            </button>
-            <span>1</span>
-            <button
-              style={{
-                padding: "3px 11px",
-                marginLeft: "15px",
-                borderRadius: "5px",
-                paddingBottom: "5px",
-                border: "1px solid lightgrey",
-              }}
-            >
-              +
-            </button>
-          </div>
-          <div
-            className="action-buttons"
-            style={{
-              display: "flex",
-              height: "40px",
-              width: "640px",
-              gap: "30px",
-            }}
-          >
-            <div
-              className="add-to-cart"
-              style={{
-                height: "40px",
-                width: "290px",
-                border: "1px solid black",
-                borderRadius: "11px",
-                color: "white",
-                background: "rgba(95,35,198,1)",
-                padding: "6px 100px",
-              }}
-            >
-              Add to Cart
+          {/* DETAILS */}
+          <div className="details">
+            <h1>{data.name}</h1>
+
+            <div className="rating">
+              {"★".repeat(Math.floor(starRating))}
+              {"☆".repeat(5 - Math.floor(starRating))}
+              <span>{starRating} stars</span>
             </div>
-            <div
-              className="add-to-cart"
-              style={{
-                height: "40px",
-                width: "290px",
-                border: "1px solid black",
-                borderRadius: "11px",
-                color: "white",
-                background: "rgba(7, 2, 16, 1)",
-                padding: "6px 112px",
-              }}
-            >
-              Buy Now
+
+            <div className="price">
+              <span className="sell">₹{data.price}</span>
+              <span className="mrp">₹{data.MRP}</span>
+              <span className="offer">30% OFF</span>
+            </div>
+
+            <p className="desc">{data.description}</p>
+
+            <p className="meta">✔ In stock • Free delivery • Easy returns</p>
+            <p className="meta-muted">
+              🛡 1-year warranty • Secure payments • 7-day replacement
+            </p>
+
+            <div className="actions">
+              <button className="btn cart">Add to Cart</button>
+              <button className="btn buy">Buy Now</button>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -21,6 +21,11 @@ import AdminOrders from "./admin/AdminOrders";
 import AdminProducts from "./admin/AdminProducts";
 
 import ScrollToTop from "./components/ScrollToTop";
+import Smartphones from "./pages/categories/Smartphones";
+import Laptops from "./pages/categories/Laptops";
+import Speakers from "./pages/categories/Speakers";
+import Cameras from "./pages/categories/Cameras";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
   return (
@@ -37,6 +42,12 @@ function App() {
         <Route path="product/:id" element={<ProductDetails />} />
         <Route path="order-confirmation" element={<OrderConfirmation />} />
         <Route path="orders" element={<Orders />} />
+        <Route path="categories/smartphones" element={<Smartphones />} />
+        <Route path="categories/laptops" element={<Laptops />} />
+        <Route path="categories/speakers" element={<Speakers />} />
+        <Route path="categories/cameras" element={<Cameras />} />
+        <Route path="/search" element={<SearchResults />} />
+
 
         {/* ================= ADMIN ================= */}
         <Route path="admin-dashboard" element={<AdminDashboard />}>

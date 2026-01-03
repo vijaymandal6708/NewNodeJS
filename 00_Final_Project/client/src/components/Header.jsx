@@ -3,8 +3,14 @@ import { IoSearchOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
 import { useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import axios from "axios";
 
 const Header = () => {
+  const [searchText, setSearchText] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
   const navigate = useNavigate();
   const cartData = useSelector((state) => state.mycart.cart);
   const wishlistData = useSelector((state) => state.mycart.wishlist);
@@ -12,13 +18,62 @@ const Header = () => {
   const cartLength = cartData.length;
   const wishlistLength = wishlistData.length;
 
+  const debounceRef = useRef(null);
+
+  // 🔍 Auto-suggest (NO layout impact)
+  useEffect(() => {
+    if (!searchText.trim()) {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACKENDURL}/product/search?q=${searchText}`
+        );
+        setSuggestions(data);
+        setShowSuggestions(true);
+      } catch (err) {
+        console.error(err);
+      }
+    }, 300);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [searchText]);
+
+  const handleSearch = () => {
+    if (!searchText.trim()) return;
+    setShowSuggestions(false);
+    navigate(`/search?q=${searchText}`);
+  };
+
+  const handleSelect = (id) => {
+    setShowSuggestions(false);
+    setSearchText("");
+    navigate(`/product/${id}`);
+  };
+
   return (
     <>
-      {/* ===== CSS IN SAME FILE (ONLY CART/WISHLIST FIX) ===== */}
       <style>{`
         * {
           font-family: sans-serif;
+          box-sizing: border-box;
         }
+
+        .header-container {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          z-index: 2000;
+          background: white;
+}
+
 
         .top-header-container {
           height: 65px;
@@ -43,6 +98,7 @@ const Header = () => {
           font-size: 20px;
           padding-top: 5px;
           margin-left: -10px;
+          cursor: pointer;
         }
 
         .circle {
@@ -63,18 +119,12 @@ const Header = () => {
           font-style: italic;
         }
 
-        .left-container a:hover {
-          color: #6a0dad;
-        }
-
         .right-container {
           display: flex;
-          // border: 1px solid black;
           height: 100%;
           width: 90px;
         }
 
-        /* 🔧 ONLY FIXED PART */
         .wishlist-container,
         .cart-container {
           height: 100%;
@@ -82,8 +132,8 @@ const Header = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          // border: 1px solid black;
-          position: relative; /* anchor for badge */
+          position: relative;
+          cursor: pointer;
         }
 
         .wishlist-container span,
@@ -103,8 +153,6 @@ const Header = () => {
         .wishlist-container svg,
         .cart-container svg {
           font-size: 20px;
-          position: relative;
-          z-index: 1;
         }
 
         .bottom-header-container {
@@ -121,6 +169,7 @@ const Header = () => {
           margin-top: 3px;
         }
 
+        /* ===== SEARCH BAR (UNCHANGED) ===== */
         .search-bar {
           height: 35px;
           width: 700px;
@@ -130,6 +179,8 @@ const Header = () => {
           align-items: center;
           font-size: 14px;
           margin-right: 430px;
+          overflow: visible;     /* 🔑 allow dropdown */
+          position: relative;    /* 🔑 anchor dropdown */
         }
 
         .search-icon {
@@ -138,9 +189,10 @@ const Header = () => {
         }
 
         .search-bar input {
-          width: 422px;
+          flex: 1;
           border: none;
           padding: 5px 15px;
+          outline: none;
         }
 
         .search-button {
@@ -151,8 +203,39 @@ const Header = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          border-top-right-radius: 5px;
-          border-bottom-right-radius: 5px;
+          cursor: pointer;
+        }
+
+        /* ===== AUTOSUGGEST (NEW, NO LAYOUT SHIFT) ===== */
+        .suggestions {
+          position: absolute;
+          top: 38px;
+          left: 0;
+          width: 100%;
+          background: white;
+          border-radius: 6px;
+          box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+          z-index: 9999;
+          max-height: 250px;
+          overflow-y: auto;
+        }
+
+        .suggestion-item {
+          display: flex;
+          gap: 12px;
+          padding: 10px 14px;
+          cursor: pointer;
+          border-bottom: 1px solid #eee;
+        }
+
+        .suggestion-item:hover {
+          background: #f5f5f5;
+        }
+
+        .suggestion-item img {
+          width: 38px;
+          height: 38px;
+          object-fit: contain;
         }
 
         .profile {
@@ -160,28 +243,23 @@ const Header = () => {
           background-color: white;
           aspect-ratio: 1 / 1;
           border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
           flex-shrink: 0;
         }
-
       `}</style>
 
-      {/* ===== JSX ===== */}
       <div className="header-container">
         <div className="top-header-container">
           <div className="left-container">
-            <div className="logo">
+            <div className="logo" onClick={() => navigate("/home")}>
               <div className="circle"></div>
               <p>.Gadget Galaxy</p>
             </div>
 
             <Link to="/home">Home</Link>
-            <Link to="/home">Smartphones</Link>
-            <Link to="/home">Laptops</Link>
-            <Link to="/home">Accessories</Link>
-            <Link to="/home">Cameras</Link>
+            <Link to="/categories/smartphones">Smartphones</Link>
+            <Link to="/categories/laptops">Laptops</Link>
+            <Link to="/categories/speakers">Speakers</Link>
+            <Link to="/categories/cameras">Cameras</Link>
           </div>
 
           <div className="right-container">
@@ -190,9 +268,12 @@ const Header = () => {
               <FaRegHeart />
             </div>
 
-            <div className="cart-container">
+            <div
+              className="cart-container"
+              onClick={() => navigate("/cart")}
+            >
               <span>{cartLength}</span>
-              <FiShoppingCart onClick={() => navigate("/cart")} />
+              <FiShoppingCart />
             </div>
           </div>
         </div>
@@ -202,8 +283,37 @@ const Header = () => {
             <div className="search-icon">
               <IoSearchOutline />
             </div>
-            <input type="text" placeholder="Search products" />
-            <div className="search-button">Search</div>
+
+            <input
+              type="text"
+              placeholder="Search products"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onFocus={() => searchText && setShowSuggestions(true)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+            />
+
+            <div className="search-button" onClick={handleSearch}>
+              Search
+            </div>
+
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="suggestions">
+                {suggestions.map((item) => (
+                  <div
+                    key={item._id}
+                    className="suggestion-item"
+                    onMouseDown={() => handleSelect(item._id)}
+                  >
+                    <img src={item.defaultImage} alt={item.name} />
+                    <div>
+                      <div>{item.name}</div>
+                      <small>₹{item.price}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <Link to="/login">Login</Link>
