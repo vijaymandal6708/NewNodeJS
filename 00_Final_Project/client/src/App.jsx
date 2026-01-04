@@ -26,6 +26,7 @@ import Laptops from "./pages/categories/Laptops";
 import Speakers from "./pages/categories/Speakers";
 import Cameras from "./pages/categories/Cameras";
 import SearchResults from "./pages/SearchResults";
+import Wishlist from "./Wishlist";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
         <Route path="categories/speakers" element={<Speakers />} />
         <Route path="categories/cameras" element={<Cameras />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/wishlist" element={<Wishlist />} />
 
 
         {/* ================= ADMIN ================= */}

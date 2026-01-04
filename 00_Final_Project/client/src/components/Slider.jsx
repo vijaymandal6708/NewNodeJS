@@ -1,41 +1,76 @@
 import { useEffect, useRef, useState } from "react";
+import { Carousel } from "bootstrap";
 
 const Slider = () => {
   const carouselRef = useRef(null);
+  const carouselInstance = useRef(null);
+  const timerRef = useRef(null);
   const [progress, setProgress] = useState(0);
 
-  const SLIDE_TIME = 3000; // 3 seconds
-  const STEP = 30;
+  const SLIDE_TIME = 4000;
+  const STEP = 32;
 
   const radius = 18;
   const circumference = 2 * Math.PI * radius;
 
+  const startProgress = () => {
+    clearInterval(timerRef.current);
+    setProgress(0);
+
+    timerRef.current = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timerRef.current);
+          return 100;
+        }
+        return prev + (STEP / SLIDE_TIME) * 100;
+      });
+    }, STEP);
+  };
+
   useEffect(() => {
-    let timer;
+    if (!carouselRef.current) return;
 
-    const startProgress = () => {
-      clearInterval(timer);
-      setProgress(0);
+    const images = carouselRef.current.querySelectorAll("img");
+    let loadedCount = 0;
 
-      timer = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(timer);
-            return 100;
-          }
-          return prev + (STEP / SLIDE_TIME) * 100;
-        });
-      }, STEP);
+    const initCarousel = () => {
+      carouselInstance.current = new Carousel(carouselRef.current, {
+        interval: SLIDE_TIME,
+        pause: false,
+        wrap: true,
+      });
+
+      carouselRef.current.addEventListener(
+        "slid.bs.carousel",
+        startProgress
+      );
+
+      carouselInstance.current.cycle(); // ✅ FORCE START
+      startProgress();
     };
 
-    const carousel = carouselRef.current;
-    carousel.addEventListener("slid.bs.carousel", startProgress);
+    images.forEach((img) => {
+      if (img.complete) {
+        loadedCount++;
+      } else {
+        img.onload = () => {
+          loadedCount++;
+          if (loadedCount === images.length) {
+            initCarousel();
+          }
+        };
+      }
+    });
 
-    startProgress();
+    // If all images already cached
+    if (loadedCount === images.length) {
+      initCarousel();
+    }
 
     return () => {
-      clearInterval(timer);
-      carousel.removeEventListener("slid.bs.carousel", startProgress);
+      clearInterval(timerRef.current);
+      carouselInstance.current?.dispose();
     };
   }, []);
 
@@ -44,14 +79,7 @@ const Slider = () => {
 
   return (
     <div className="container mt-4 position-relative">
-      {/* Carousel */}
-      <div
-        ref={carouselRef}
-        id="circleSlider"
-        className="carousel slide"
-        data-bs-ride="carousel"
-        data-bs-interval="3000"
-      >
+      <div ref={carouselRef} className="carousel slide">
         <div className="carousel-inner">
           {[1, 2, 3, 4, 5].map((num, index) => (
             <div
@@ -60,32 +88,34 @@ const Slider = () => {
             >
               <img
                 src={`offer${num}.jpg`}
-                className="d-block w-100" 
-                style={{height:"500px"}}
+                className="d-block w-100"
+                style={{ height: "450px" }}
                 alt={`slide-${num}`}
               />
             </div>
           ))}
         </div>
 
-        {/* Left Arrow */}
         <button
           className="carousel-control-prev"
           type="button"
-          data-bs-target="#circleSlider"
-          data-bs-slide="prev"
+          onClick={() => {
+            carouselInstance.current.prev();
+            startProgress();
+          }}
         >
-          <span className="carousel-control-prev-icon"></span>
+          <span className="carousel-control-prev-icon" />
         </button>
 
-        {/* Right Arrow */}
         <button
           className="carousel-control-next"
           type="button"
-          data-bs-target="#circleSlider"
-          data-bs-slide="next"
+          onClick={() => {
+            carouselInstance.current.next();
+            startProgress();
+          }}
         >
-          <span className="carousel-control-next-icon"></span>
+          <span className="carousel-control-next-icon" />
         </button>
       </div>
 

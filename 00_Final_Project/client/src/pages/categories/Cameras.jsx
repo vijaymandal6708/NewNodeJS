@@ -9,232 +9,363 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Cameras = () => {
   const [products, setProducts] = useState([]);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+
+  const [filters, setFilters] = useState({
+    price: "",
+    rating: "",
+  });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector((state) => state.mycart.cart);
 
+  /* ===== LOAD DATA ===== */
   useEffect(() => {
-    const loadCameras = async () => {
+    const loadSmartphones = async () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_BACKENDURL}/product/product-display`
       );
 
-      const cameras = data.filter(
-        (item) =>
-          item.category &&
-          item.category.toLowerCase().includes("camera")
+      const smartphones = data.filter(
+        (item) => item.category && item.category.toLowerCase().includes("laptop")
       );
 
-      setProducts(cameras);
+      setProducts(smartphones);
     };
 
-    loadCameras();
+    loadSmartphones();
   }, []);
+
+  /* ===== BRANDS FROM PRODUCT NAME ===== */
+  const brands = [...new Set(products.map((p) => p.name.split(" ")[0]))];
+
+  const toggleBrand = (brand) => {
+    setSelectedBrands((prev) =>
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+    );
+  };
+
+  /* ===== FILTER LOGIC (PRICE ×10 FIXED) ===== */
+  const filteredProducts = products.filter((item) => {
+    let priceOk = true;
+    let ratingOk = true;
+    let brandOk = true;
+
+    if (filters.price === "low") priceOk = item.price < 1500;
+    if (filters.price === "mid")
+      priceOk = item.price >= 1500 && item.price <= 3000;
+    if (filters.price === "high") priceOk = item.price > 3000;
+
+    if (filters.rating)
+      ratingOk = Number(item.starRating || 0) >= Number(filters.rating);
+
+    if (selectedBrands.length > 0) {
+      const brand = item.name.split(" ")[0];
+      brandOk = selectedBrands.includes(brand);
+    }
+
+    return priceOk && ratingOk && brandOk;
+  });
 
   return (
     <>
-      {/* ================= FULL PAGE CSS ================= */}
+      {/* ================= CSS ================= */}
       <style>{`
-        * {
-          box-sizing: border-box;
-        }
-
         body {
           margin: 0;
-          background: #f4f6f8;
+          background: #f3f3f3;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont;
         }
 
+        /* ===== PAGE WRAPPER ===== */
         .category-page {
-          min-height: 100vh;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
+          max-width: 1522px;
+          margin: auto;
+          padding: 0 0px 0px; /* 🔥 header gap */
         }
+
+        /* ===== BANNER ===== */
+        
+        .banner-container {
+          background: #fff;                 /* white card background */
+          border: 1px solid #ddd;            /* visible border */
+          border-radius: 14px;               /* rounded corners */
+          padding: 12px;                     /* gap between border & image */
+          margin: 0 40px 30px;               /* spacing from page sides */
+          box-shadow: 0 6px 18px rgba(0,0,0,0.08); /* subtle elevation */
+        }
+
+        .category-banner {
+          height: 400px;
+          width: 1410px;
+          background-image: url("/camera-banner.jpg");
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: cover;
+          border-radius: 10px;               /* inner rounding */
+        }
+
 
         .section-header {
-          width: 100%;
-          padding: 40px 80px 10px;
           text-align: center;
-          margin-bottom: -30px;
+          margin: 30px 0 10px;
         }
 
         .section-header h2 {
-          font-size: 28px;
-          font-weight: bold;
-          color: #222;
-          margin-bottom: 4px;
-          /* subtle tilt (less than italic) */
+          font-size: 26px;
+          font-weight: 700;
           transform: skewX(-6deg);
-
-          /* 👇 stronger, visible shadow */
-           text-shadow:
-          1px 1px 0 rgba(0,0,0,0.25),
-          2px 3px 6px rgba(0,0,0,0.35);
-
-          letter-spacing: 0.6px;
+          text-shadow: 2px 3px 6px rgba(0,0,0,.35);
         }
 
         .section-header p {
           font-size: 14px;
           color: #666;
-          /* subtle tilt (less than italic) */
           transform: skewX(-6deg);
         }
 
-
-        /* ===== BANNER ===== */
-        .category-banner {
-          width: 1520px;
-          height: 55.5vh;
-          background-image: url("/camera-banner.png");
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: contain;
-          background-color: #f4f6f8;
+        /* ===== TITLE ===== */
+        .page-title {
+          font-size: 26px;
+          font-weight: 700;
+          margin-bottom: 4px;
         }
 
-        /* ===== PRODUCTS SECTION ===== */
-        .products-section {
-          flex: 1;
-          width: 100%;
-          max-width: 1400px;
-          margin: auto;
-          padding: 50px 10px;
+        .page-subtitle {
+          font-size: 14px;
+          color: #555;
+          margin-bottom: 24px;
         }
 
-        .products-container {
+        /* ===== LAYOUT ===== */
+        .layout {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-          gap: 32px;
+          grid-template-columns: 210px 1fr;
+          gap: 28px;
+          padding: 0px 40px;
         }
 
-        /* ===== PRODUCT CARD (SAME AS HOME) ===== */
-        .product-card {
+        /* ===== FILTERS ===== */
+        .filters {
           background: #fff;
-          border-radius: 18px;
-          overflow: hidden;
-          box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-          transition: all 0.3s ease;
-          display: flex;
-          flex-direction: column;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          padding: 18px;
+          height: fit-content;
+          position: sticky;
+          top: 150px;
+          width: 200px;
+        }
+
+        .filters h4 {
+          font-size: 15px;
+          font-weight: 700;
+          margin-bottom: 16px;
+        }
+
+        .filter-group {
+          margin-bottom: 22px;
+        }
+
+        .filter-group strong {
+          display: block;
+          font-size: 13px;
+          margin-bottom: 8px;
+        }
+
+        .filter-group label {
+          display: block;
+          font-size: 13px;
+          color: #222;
+          margin-bottom: 6px;
           cursor: pointer;
         }
 
+        /* ===== PRODUCTS GRID ===== */
+        .products {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+          gap: 24px;
+        }
+
+        /* ===== PRODUCT CARD ===== */
+        .product-card {
+          background: #fff;
+          border: 1px solid #e5e5e5;
+          border-radius: 16px;
+          cursor: pointer;
+          transition: box-shadow 0.2s ease;
+        }
+
         .product-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+          box-shadow: 0 4px 18px rgba(0,0,0,0.12);
         }
 
         .product-image {
-          height: 260px;
-          background: linear-gradient(145deg, #eef1f5, #ffffff);
+          height: 220px;
+          background: #f1f3f6;
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 20px;
+          padding: 12px;
         }
 
         .product-image img {
           max-width: 100%;
           max-height: 100%;
           object-fit: contain;
-          transition: transform 0.3s ease;
-        }
-
-        .product-card:hover img {
-          transform: scale(1.06);
         }
 
         .product-info {
-          padding: 8px 30px 25px;
-          display: flex;
-          flex-direction: column;
-          flex: 1;
+          padding: 14px 24px 22px;
         }
 
         .product-info h4 {
-          font-size: 17px;
+          font-size: 15.5px;
           font-weight: 600;
-          color: #222;
           line-height: 1.4;
-          height: calc(1.4em * 2);
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
+          height: 40px;
           margin-bottom: 6px;
         }
 
         .rating {
-          font-size: 14px;
-          color: #f5b301;
-          margin-bottom: 6px;
+          font-size: 13px;
+          color: #f54064ff;
+          margin-bottom: 2px;
         }
 
-        .price-box {
+        .price-row {
           display: flex;
           align-items: center;
-          gap: 12px;
-          margin-bottom: 18px;
+          gap: 8px;
+          margin-bottom: 10px;
         }
 
         .price {
-          font-size: 18px;
+          font-size: 16px;
           font-weight: 700;
-          color: #4b0082;
         }
 
         .mrp {
-          font-size: 14px;
-          color: #999;
+          font-size: 13px;
+          color: #777;
           text-decoration: line-through;
         }
 
-        .offer {
-          font-size: 12px;
+        .wishlist {
+          margin-left: auto;
+          margin-right: 8px;
+          margin-top: -12px;
+          cursor: pointer;
+          font-size: 20px;
         }
 
         .add-cart-btn {
           width: 100%;
-          background: linear-gradient(135deg, #020718, #131a3b);
-          border: none;
+          background: linear-gradient(135deg, #020718ff, #131a3bff);
           color: white;
-          padding: 10px 0;
-          border-radius: 16px;
+          padding: 8px;
+          border-radius: 20px;
+          font-size: 14px;
           cursor: pointer;
-          font-size: 15px;
-          font-weight: 600;
         }
 
-        @media (max-width: 768px) {
-          .products-section {
-            padding: 30px 20px;
-          }
+        .add-cart-btn:hover {
+          background: #101010d2;
         }
       `}</style>
 
       {/* ================= PAGE ================= */}
       <div className="category-page">
-        {/* ===== BANNER ===== */}
-        <div className="category-banner"></div>
-
-        <div className="section-header">
-            <h2>Trending Cameras</h2>
-            <p>Top picks hand-selected for you</p>
+        <div className="banner-container">
+          <div className="category-banner"></div>
         </div>
 
-        {/* ===== PRODUCTS ===== */}
-        <div className="products-section">
-          <div className="products-container">
-            {products.map((item) => {
+        <div className="section-header">
+          <h2>Trending Smartphones</h2>
+          <p>Top picks hand-selected for you</p>
+        </div>
+
+        <div className="layout">
+          {/* ===== FILTERS ===== */}
+          <div className="filters">
+            <h4>Filters</h4>
+
+            <div className="filter-group">
+              <strong>Brand</strong>
+              {brands.map((brand) => (
+                <label key={brand}>
+                  <input
+                    type="checkbox"
+                    checked={selectedBrands.includes(brand)}
+                    onChange={() => toggleBrand(brand)}
+                  />{" "}
+                  {brand}
+                </label>
+              ))}
+            </div>
+
+            <div className="filter-group">
+              <strong>Price</strong>
+              <label>
+                <input
+                  type="radio"
+                  name="price"
+                  onChange={() => setFilters({ ...filters, price: "low" })}
+                />{" "}
+                Under ₹1,500
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="price"
+                  onChange={() => setFilters({ ...filters, price: "mid" })}
+                />{" "}
+                ₹1,500 – ₹3,000
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="price"
+                  onChange={() => setFilters({ ...filters, price: "high" })}
+                />{" "}
+                Above ₹3,000
+              </label>
+            </div>
+
+            <div className="filter-group">
+              <strong>Customer Rating</strong>
+              <label>
+                <input
+                  type="radio"
+                  name="rating"
+                  onChange={() => setFilters({ ...filters, rating: "4" })}
+                />{" "}
+                4★ & above
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="rating"
+                  onChange={() => setFilters({ ...filters, rating: "3" })}
+                />{" "}
+                3★ & above
+              </label>
+            </div>
+          </div>
+
+          {/* ===== PRODUCTS ===== */}
+          <div className="products">
+            {filteredProducts.map((item) => {
               const existingItem = cart.find(
                 (cartItem) => cartItem.id === item._id
               );
 
               return (
                 <div
-                  className="product-card"
                   key={item._id}
+                  className="product-card"
                   onClick={() => navigate(`/product/${item._id}`)}
                 >
                   <div className="product-image">
@@ -249,13 +380,12 @@ const Cameras = () => {
                       {"☆".repeat(5 - Math.floor(item.starRating || 0))}
                     </div>
 
-                    <div className="price-box">
+                    <div className="price-row">
                       <span className="price">₹{item.price}</span>
                       <span className="mrp">₹{item.MRP}</span>
-                      <span className="offer">30% off</span>
 
                       <FaRegHeart
-                        style={{ marginLeft: "auto", cursor: "pointer" }}
+                        className="wishlist"
                         onClick={(e) => {
                           e.stopPropagation();
                           dispatch(addToWishlist({ ...item, qnty: 1 }));
@@ -271,7 +401,7 @@ const Cameras = () => {
 
                         if (existingItem) {
                           dispatch(increaseQuantity(existingItem));
-                          toast.info("Quantity increased");
+                          toast.info("Quantity increased", { autoClose: 1200 });
                         } else {
                           dispatch(
                             addToCart({
@@ -282,7 +412,9 @@ const Cameras = () => {
                               qnty: 1,
                             })
                           );
-                          toast.success("Item added to cart");
+                          toast.success("Item added to cart", {
+                            autoClose: 1200,
+                          });
                         }
                       }}
                     >

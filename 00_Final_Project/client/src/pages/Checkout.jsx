@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { clearCart } from "../cartSlice";
+
 
 const Checkout = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.mycart.cart);
 
@@ -145,6 +148,8 @@ const Checkout = () => {
             }
 
             await createOrder(); // ✅ FIXED (this was missing proper handling)
+            
+            dispatch(clearCart());
 
             // ✅ SCROLL CHECKOUT PAGE TO TOP
             window.scrollTo({ top: 0, behavior: "smooth" });

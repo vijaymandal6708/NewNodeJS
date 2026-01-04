@@ -186,6 +186,7 @@ const AdminDashboard = () => {
 
         .content-card h3 {
           margin-bottom: 10px;
+          font-size: 20px;
         }
 
         .loading {
@@ -216,7 +217,7 @@ const AdminDashboard = () => {
       <div className="admin-layout">
         {/* SIDEBAR */}
         <aside className="admin-sidebar">
-          <h2 className="brand">Gadget Galaxy Admin</h2>
+          <h2 className="brand">Seller Dashboard</h2>
           <nav>
             <NavLink to="/admin-dashboard" end>
               Dashboard
@@ -231,7 +232,7 @@ const AdminDashboard = () => {
         <section className="admin-main">
           {showDashboard && (
             <header className="admin-header">
-              <h1>Admin Dashboard</h1>
+              <h1 style={{fontSize:"28px"}}>Seller Dashboard</h1>
             </header>
           )}
 

@@ -60,6 +60,10 @@ const cartSlice = createSlice({
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
+    clearCart: (state) => {
+      state.cart = [];
+    },
+
     addToWishlist: (state, action) => {
       const exists = state.wishlist.find(
         (item) => item.id === action.payload.id
@@ -91,6 +95,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  clearCart,
   addToWishlist,
   removeFromWishlist,
 } = cartSlice.actions;

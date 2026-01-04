@@ -28,9 +28,7 @@ const Smartphones = () => {
       );
 
       const smartphones = data.filter(
-        (item) =>
-          item.category &&
-          item.category.toLowerCase().includes("phone")
+        (item) => item.category && item.category.toLowerCase().includes("phone")
       );
 
       setProducts(smartphones);
@@ -40,13 +38,11 @@ const Smartphones = () => {
   }, []);
 
   /* ===== BRANDS FROM PRODUCT NAME ===== */
-  const brands = [...new Set(products.map(p => p.name.split(" ")[0]))];
+  const brands = [...new Set(products.map((p) => p.name.split(" ")[0]))];
 
   const toggleBrand = (brand) => {
     setSelectedBrands((prev) =>
-      prev.includes(brand)
-        ? prev.filter((b) => b !== brand)
-        : [...prev, brand]
+      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
     );
   };
 
@@ -90,14 +86,42 @@ const Smartphones = () => {
         }
 
         /* ===== BANNER ===== */
+        
+        .banner-container {
+          background: #fff;                 /* white card background */
+          border: 1px solid #ddd;            /* visible border */
+          border-radius: 14px;               /* rounded corners */
+          padding: 12px;                     /* gap between border & image */
+          margin: 0 40px 30px;               /* spacing from page sides */
+          box-shadow: 0 6px 18px rgba(0,0,0,0.08); /* subtle elevation */
+        }
+
         .category-banner {
-          width: 1520px;
-          height: 450px;
-          background-image: url("/smartphone-banner.png");
+          height: 420px;
+          background-image: url("/smartphone-banner.jpg");
           background-repeat: no-repeat;
           background-position: center;
           background-size: cover;
-          margin-bottom: 24px;
+          border-radius: 10px;               /* inner rounding */
+        }
+
+
+        .section-header {
+          text-align: center;
+          margin: 30px 0 10px;
+        }
+
+        .section-header h2 {
+          font-size: 26px;
+          font-weight: 700;
+          transform: skewX(-6deg);
+          text-shadow: 2px 3px 6px rgba(0,0,0,.35);
+        }
+
+        .section-header p {
+          font-size: 14px;
+          color: #666;
+          transform: skewX(-6deg);
         }
 
         /* ===== TITLE ===== */
@@ -116,7 +140,7 @@ const Smartphones = () => {
         /* ===== LAYOUT ===== */
         .layout {
           display: grid;
-          grid-template-columns: 260px 1fr;
+          grid-template-columns: 210px 1fr;
           gap: 28px;
           padding: 0px 40px;
         }
@@ -130,6 +154,7 @@ const Smartphones = () => {
           height: fit-content;
           position: sticky;
           top: 150px;
+          width: 200px;
         }
 
         .filters h4 {
@@ -159,15 +184,15 @@ const Smartphones = () => {
         /* ===== PRODUCTS GRID ===== */
         .products {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-          gap: 26px;
+          grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+          gap: 24px;
         }
 
         /* ===== PRODUCT CARD ===== */
         .product-card {
           background: #fff;
           border: 1px solid #e5e5e5;
-          border-radius: 6px;
+          border-radius: 16px;
           cursor: pointer;
           transition: box-shadow 0.2s ease;
         }
@@ -192,22 +217,21 @@ const Smartphones = () => {
         }
 
         .product-info {
-          padding: 14px 16px 18px;
+          padding: 14px 24px 22px;
         }
 
         .product-info h4 {
-          font-size: 14px;
+          font-size: 15.5px;
           font-weight: 600;
           line-height: 1.4;
           height: 40px;
-          overflow: hidden;
           margin-bottom: 6px;
         }
 
         .rating {
           font-size: 13px;
-          color: #f5a623;
-          margin-bottom: 6px;
+          color: #f54064ff;
+          margin-bottom: 2px;
         }
 
         .price-row {
@@ -230,14 +254,16 @@ const Smartphones = () => {
 
         .wishlist {
           margin-left: auto;
+          margin-right: 8px;
+          margin-top: -12px;
           cursor: pointer;
+          font-size: 20px;
         }
 
         .add-cart-btn {
           width: 100%;
-          background: #ffd814;
-          border: 1px solid #fcd200;
-          color: #111;
+          background: linear-gradient(135deg, #020718ff, #131a3bff);
+          color: white;
           padding: 8px;
           border-radius: 20px;
           font-size: 14px;
@@ -245,17 +271,19 @@ const Smartphones = () => {
         }
 
         .add-cart-btn:hover {
-          background: #f7ca00;
+          background: #101010d2;
         }
       `}</style>
 
       {/* ================= PAGE ================= */}
       <div className="category-page">
-        <div className="category-banner"></div>
+        <div className="banner-container">
+          <div className="category-banner"></div>
+        </div>
 
-        <div className="page-title">Smartphones</div>
-        <div className="page-subtitle">
-          Compare prices, features & customer ratings
+        <div className="section-header">
+          <h2>Trending Smartphones</h2>
+          <p>Top picks hand-selected for you</p>
         </div>
 
         <div className="layout">
@@ -369,17 +397,24 @@ const Smartphones = () => {
                       className="add-cart-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-                        existingItem
-                          ? dispatch(increaseQuantity(existingItem))
-                          : dispatch(
-                              addToCart({
-                                id: item._id,
-                                name: item.name,
-                                price: item.price,
-                                image: item.defaultImage,
-                                qnty: 1,
-                              })
-                            );
+
+                        if (existingItem) {
+                          dispatch(increaseQuantity(existingItem));
+                          toast.info("Quantity increased", { autoClose: 1200 });
+                        } else {
+                          dispatch(
+                            addToCart({
+                              id: item._id,
+                              name: item.name,
+                              price: item.price,
+                              image: item.defaultImage,
+                              qnty: 1,
+                            })
+                          );
+                          toast.success("Item added to cart", {
+                            autoClose: 1200,
+                          });
+                        }
                       }}
                     >
                       Add to Cart

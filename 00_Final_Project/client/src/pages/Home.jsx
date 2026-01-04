@@ -38,7 +38,7 @@ const Home = () => {
         }
 
         body {
-          margin: 0;
+          margin-top: 165px;
           background: #f4f6f8;
         }
 
@@ -103,7 +103,7 @@ const Home = () => {
         }
 
         .product-info h4 {
-          font-size: 17px;
+          font-size: 18px;
           font-weight: 600;
           color: #222;
           line-height: 1.4;
