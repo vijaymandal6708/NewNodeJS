@@ -17,16 +17,28 @@ const productDetail = async (req,res) => {
   res.json(product);
 }
 
-const Product = require("../models/ProductModel");
-
 const getByCategory = async (req, res) => {
   try {
     const category = req.params.category.toLowerCase();
 
-    const products = await Product.find({ category });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
 
-    res.status(200).json(products);
+    const totalProducts = await ProductModel.countDocuments({ category });
+
+    const products = await ProductModel.find({ category })
+      .skip(skip)
+      .limit(limit)
+
+    res.status(200).json({
+      products,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / limit),
+      totalProducts,
+    });
   } catch (error) {
+    console.error("GetByCategory Error:", error);
     res.status(500).json({ msg: "Failed to fetch category products" });
   }
 };

@@ -199,19 +199,42 @@ const ProductDetail = () => {
           font-size: 16px;
           font-weight: 600;
           cursor: pointer;
+          transition: background 0.25s ease, transform 0.15s ease, box-shadow 0.25s ease;
         }
 
         .cart {
-          background: #5f23c6;
-          color: #fff;
+          background: #2e0b6aff;
+          color: #ffffff;
           border: none;
         }
 
         .buy {
           background: #0f172a;
-          color: #fff;
+          color: #ffffff;
           border: none;
         }
+        
+        /* Add to Cart hover */
+.btn.cart:hover {
+  background: #3b1391; /* slightly lighter purple */
+  box-shadow: 0 10px 25px rgba(46, 11, 106, 0.35);
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+/* Buy Now hover */
+.btn.buy:hover {
+  background: #1e293b; /* softer dark */
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4);
+  transform: translateY(-1px);
+  color: #ffffff;
+}
+
+/* Optional: click feedback */
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+}
       `}</style>
 
       {/* ================= UI ================= */}

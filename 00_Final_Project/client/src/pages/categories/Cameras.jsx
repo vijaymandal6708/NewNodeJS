@@ -97,7 +97,7 @@ const Cameras = () => {
         }
 
         .category-banner {
-          height: 400px;
+          height: 420px;
           width: 1410px;
           background-image: url("/camera-banner.jpg");
           background-repeat: no-repeat;

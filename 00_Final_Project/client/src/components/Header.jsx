@@ -221,21 +221,18 @@ const Header = () => {
         }
 
         .suggestion-item {
-          display: flex;
-          gap: 12px;
-          padding: 10px 14px;
+          padding: 10px 16px;
           cursor: pointer;
+          font-size: 14px;
+          color: #222;
           border-bottom: 1px solid #eee;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .suggestion-item:hover {
           background: #f5f5f5;
-        }
-
-        .suggestion-item img {
-          width: 38px;
-          height: 38px;
-          object-fit: contain;
         }
 
         .profile {
@@ -268,10 +265,7 @@ const Header = () => {
               <FaRegHeart />
             </div>
 
-            <div
-              className="cart-container"
-              onClick={() => navigate("/cart")}
-            >
+            <div className="cart-container" onClick={() => navigate("/cart")}>
               <span>{cartLength}</span>
               <FiShoppingCart />
             </div>
@@ -279,7 +273,14 @@ const Header = () => {
         </div>
 
         <div className="bottom-header-container">
-          <div className="search-bar">
+          <div
+            className="search-bar"
+            onMouseEnter={() => {
+              if (searchText && suggestions.length > 0) {
+                setShowSuggestions(true);
+              }
+            }}
+          >
             <div className="search-icon">
               <IoSearchOutline />
             </div>
@@ -298,18 +299,17 @@ const Header = () => {
             </div>
 
             {showSuggestions && suggestions.length > 0 && (
-              <div className="suggestions">
+              <div
+                className="suggestions"
+                onMouseLeave={() => setShowSuggestions(false)}
+              >
                 {suggestions.map((item) => (
                   <div
                     key={item._id}
-                    className="suggestion-item"
+                    className="suggestion-item name-only"
                     onMouseDown={() => handleSelect(item._id)}
                   >
-                    <img src={item.defaultImage} alt={item.name} />
-                    <div>
-                      <div>{item.name}</div>
-                      <small>₹{item.price}</small>
-                    </div>
+                    {item.name}
                   </div>
                 ))}
               </div>

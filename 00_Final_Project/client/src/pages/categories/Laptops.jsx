@@ -97,7 +97,7 @@ const Laptops = () => {
         }
 
         .category-banner {
-          height: 420px;
+          height: 410px;
           background-image: url("/laptop-banner.jpg");
           background-repeat: no-repeat;
           background-position: center;
