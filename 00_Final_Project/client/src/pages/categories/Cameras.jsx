@@ -8,45 +8,59 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const Cameras = () => {
+  /* ===== STATE ===== */
   const [products, setProducts] = useState([]);
-  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-  const [filters, setFilters] = useState({
-    price: "",
-    rating: "",
-  });
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [filters, setFilters] = useState({ price: "", rating: "" });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cart = useSelector((state) => state.mycart.cart);
 
-  /* ===== LOAD DATA ===== */
+  /* ===== LOAD DATA (CATEGORY + PAGINATION) ===== */
   useEffect(() => {
     const loadSmartphones = async () => {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_BACKENDURL}/product/product-display`
-      );
+      try {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_BACKENDURL}/product/category/camera`,
+          { params: { page } }
+        );
 
-      const smartphones = data.filter(
-        (item) => item.category && item.category.toLowerCase().includes("laptop")
-      );
-
-      setProducts(smartphones);
+        setProducts(data.products);      // ✅ important
+        setTotalPages(data.totalPages);  // ✅ important
+      } catch (err) {
+        console.error(err);
+      }
     };
 
     loadSmartphones();
-  }, []);
+  }, [page]);
 
-  /* ===== BRANDS FROM PRODUCT NAME ===== */
+  /* ===== SCROLL TO TOP ON PAGE CHANGE ===== */
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
+  /* ===== RESET PAGE ON FILTER CHANGE ===== */
+  useEffect(() => {
+    setPage(1);
+  }, [filters, selectedBrands]);
+
+  /* ===== BRANDS ===== */
   const brands = [...new Set(products.map((p) => p.name.split(" ")[0]))];
 
   const toggleBrand = (brand) => {
     setSelectedBrands((prev) =>
-      prev.includes(brand) ? prev.filter((b) => b !== brand) : [...prev, brand]
+      prev.includes(brand)
+        ? prev.filter((b) => b !== brand)
+        : [...prev, brand]
     );
   };
 
-  /* ===== FILTER LOGIC (PRICE ×10 FIXED) ===== */
+  /* ===== FILTER LOGIC ===== */
   const filteredProducts = products.filter((item) => {
     let priceOk = true;
     let ratingOk = true;
@@ -70,7 +84,7 @@ const Cameras = () => {
 
   return (
     <>
-      {/* ================= CSS ================= */}
+      {/* ================= CSS (UNCHANGED SCALE) ================= */}
       <style>{`
         body {
           margin: 0;
@@ -78,38 +92,29 @@ const Cameras = () => {
           font-family: system-ui, -apple-system, BlinkMacSystemFont;
         }
 
-        /* ===== PAGE WRAPPER ===== */
         .category-page {
           max-width: 1522px;
           margin: auto;
-          padding: 0 0px 0px; /* 🔥 header gap */
         }
 
-        /* ===== BANNER ===== */
-        
         .banner-container {
-          background: #fff;                 /* white card background */
-          border: 1px solid #ddd;            /* visible border */
-          border-radius: 14px;               /* rounded corners */
-          padding: 12px;                     /* gap between border & image */
-          margin: 0 40px 30px;               /* spacing from page sides */
-          box-shadow: 0 6px 18px rgba(0,0,0,0.08); /* subtle elevation */
+          background: #fff;
+          border: 1px solid #ddd;
+          border-radius: 14px;
+          padding: 12px;
+          margin: 0 40px 30px;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         }
 
         .category-banner {
           height: 420px;
-          width: 1410px;
-          background-image: url("/camera-banner.jpg");
-          background-repeat: no-repeat;
-          background-position: center;
-          background-size: cover;
-          border-radius: 10px;               /* inner rounding */
+          background: url("/camera-banner.jpg") center/cover no-repeat;
+          border-radius: 10px;
         }
-
 
         .section-header {
           text-align: center;
-          margin: 30px 0 10px;
+          margin: 50px 0 40px;
         }
 
         .section-header h2 {
@@ -125,81 +130,44 @@ const Cameras = () => {
           transform: skewX(-6deg);
         }
 
-        /* ===== TITLE ===== */
-        .page-title {
-          font-size: 26px;
-          font-weight: 700;
-          margin-bottom: 4px;
-        }
-
-        .page-subtitle {
-          font-size: 14px;
-          color: #555;
-          margin-bottom: 24px;
-        }
-
-        /* ===== LAYOUT ===== */
         .layout {
           display: grid;
           grid-template-columns: 210px 1fr;
           gap: 28px;
-          padding: 0px 40px;
+          padding: 0 40px;
         }
 
-        /* ===== FILTERS ===== */
         .filters {
           background: #fff;
           border: 1px solid #ddd;
           border-radius: 6px;
           padding: 18px;
-          height: fit-content;
           position: sticky;
           top: 150px;
-          width: 200px;
-        }
-
-        .filters h4 {
-          font-size: 15px;
-          font-weight: 700;
-          margin-bottom: 16px;
         }
 
         .filter-group {
           margin-bottom: 22px;
         }
 
-        .filter-group strong {
-          display: block;
-          font-size: 13px;
-          margin-bottom: 8px;
-        }
-
         .filter-group label {
           display: block;
           font-size: 13px;
-          color: #222;
           margin-bottom: 6px;
           cursor: pointer;
         }
 
-        /* ===== PRODUCTS GRID ===== */
         .products {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
           gap: 24px;
         }
 
-        /* ===== PRODUCT CARD ===== */
         .product-card {
           background: #fff;
           border: 1px solid #e5e5e5;
           border-radius: 16px;
           cursor: pointer;
-          transition: box-shadow 0.2s ease;
-        }
-
-        .product-card:hover {
-          box-shadow: 0 4px 18px rgba(0,0,0,0.12);
         }
 
         .product-image {
@@ -208,7 +176,6 @@ const Cameras = () => {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 12px;
         }
 
         .product-image img {
@@ -224,15 +191,13 @@ const Cameras = () => {
         .product-info h4 {
           font-size: 15.5px;
           font-weight: 600;
-          line-height: 1.4;
           height: 40px;
           margin-bottom: 6px;
         }
 
         .rating {
           font-size: 13px;
-          color: #f54064ff;
-          margin-bottom: 2px;
+          color: #f54064;
         }
 
         .price-row {
@@ -255,8 +220,6 @@ const Cameras = () => {
 
         .wishlist {
           margin-left: auto;
-          margin-right: 8px;
-          margin-top: -12px;
           cursor: pointer;
           font-size: 20px;
         }
@@ -271,8 +234,53 @@ const Cameras = () => {
           cursor: pointer;
         }
 
-        .add-cart-btn:hover {
-          background: #101010d2;
+        /* ===== PAGINATION (ONLY THIS IS NEW) ===== */
+        .pagination {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 12px;
+          margin: 40px 0 60px;
+        }
+
+        .nav-btn {
+          padding: 6px 14px;
+          border-radius: 18px;
+          border: 1px solid #ddd;
+          background: #fff;
+          font-size: 13px;
+          cursor: pointer;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+          background: #020718ff;
+          color: #fff;
+        }
+
+        .nav-btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+
+        .page-numbers {
+          display: flex;
+          gap: 8px;
+        }
+
+        .page-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1px solid #ddd;
+          background: #fff;
+          font-size: 13px;
+          cursor: pointer;
+        }
+
+        .page-btn.active {
+          background: linear-gradient(135deg, #020718ff, #131a3bff);
+          color: #fff;
+          border: none;
         }
       `}</style>
 
@@ -288,10 +296,8 @@ const Cameras = () => {
         </div>
 
         <div className="layout">
-          {/* ===== FILTERS ===== */}
+          {/* FILTERS */}
           <div className="filters">
-            <h4>Filters</h4>
-
             <div className="filter-group">
               <strong>Brand</strong>
               {brands.map((brand) => (
@@ -309,27 +315,18 @@ const Cameras = () => {
             <div className="filter-group">
               <strong>Price</strong>
               <label>
-                <input
-                  type="radio"
-                  name="price"
-                  onChange={() => setFilters({ ...filters, price: "low" })}
-                />{" "}
+                <input type="radio" name="price"
+                  onChange={() => setFilters({ ...filters, price: "low" })} />
                 Under ₹1,500
               </label>
               <label>
-                <input
-                  type="radio"
-                  name="price"
-                  onChange={() => setFilters({ ...filters, price: "mid" })}
-                />{" "}
+                <input type="radio" name="price"
+                  onChange={() => setFilters({ ...filters, price: "mid" })} />
                 ₹1,500 – ₹3,000
               </label>
               <label>
-                <input
-                  type="radio"
-                  name="price"
-                  onChange={() => setFilters({ ...filters, price: "high" })}
-                />{" "}
+                <input type="radio" name="price"
+                  onChange={() => setFilters({ ...filters, price: "high" })} />
                 Above ₹3,000
               </label>
             </div>
@@ -337,25 +334,19 @@ const Cameras = () => {
             <div className="filter-group">
               <strong>Customer Rating</strong>
               <label>
-                <input
-                  type="radio"
-                  name="rating"
-                  onChange={() => setFilters({ ...filters, rating: "4" })}
-                />{" "}
+                <input type="radio" name="rating"
+                  onChange={() => setFilters({ ...filters, rating: "4" })} />
                 4★ & above
               </label>
               <label>
-                <input
-                  type="radio"
-                  name="rating"
-                  onChange={() => setFilters({ ...filters, rating: "3" })}
-                />{" "}
+                <input type="radio" name="rating"
+                  onChange={() => setFilters({ ...filters, rating: "3" })} />
                 3★ & above
               </label>
             </div>
           </div>
 
-          {/* ===== PRODUCTS ===== */}
+          {/* PRODUCTS */}
           <div className="products">
             {filteredProducts.map((item) => {
               const existingItem = cart.find(
@@ -398,10 +389,8 @@ const Cameras = () => {
                       className="add-cart-btn"
                       onClick={(e) => {
                         e.stopPropagation();
-
                         if (existingItem) {
                           dispatch(increaseQuantity(existingItem));
-                          toast.info("Quantity increased", { autoClose: 1200 });
                         } else {
                           dispatch(
                             addToCart({
@@ -412,9 +401,7 @@ const Cameras = () => {
                               qnty: 1,
                             })
                           );
-                          toast.success("Item added to cart", {
-                            autoClose: 1200,
-                          });
+                          toast.success("Item added to cart", { autoClose: 1200 });
                         }
                       }}
                     >
@@ -425,6 +412,37 @@ const Cameras = () => {
               );
             })}
           </div>
+        </div>
+
+        {/* PAGINATION */}
+        <div className="pagination">
+          <button
+            className="nav-btn"
+            disabled={page === 1}
+            onClick={() => setPage(page - 1)}
+          >
+            ‹
+          </button>
+
+          <div className="page-numbers">
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                className={`page-btn ${page === i + 1 ? "active" : ""}`}
+                onClick={() => setPage(i + 1)}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+
+          <button
+            className="nav-btn"
+            disabled={page === totalPages}
+            onClick={() => setPage(page + 1)}
+          >
+            ›
+          </button>
         </div>
 
         <ToastContainer position="top-right" autoClose={1500} />

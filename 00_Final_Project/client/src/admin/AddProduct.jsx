@@ -19,37 +19,54 @@ const AddProduct = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const formData = new FormData();
+  // 🔔 Show loading toast
+  const toastId = toast.loading("Adding product...");
 
-      for (let key in input) {
-        formData.append(key, input[key]);
-      }
+  try {
+    const formData = new FormData();
 
-      for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]);
-      }
-
-      const admintoken = localStorage.getItem("admintoken");
-
-      await axios.post(
-        `${import.meta.env.VITE_BACKENDURL}/admin/add-product`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${admintoken}`,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      toast.success("Product added successfully");
-    } catch (error) {
-      toast.error(error.response?.data?.msg || "Add product failed");
+    for (let key in input) {
+      formData.append(key, input[key]);
     }
-  };
+
+    for (let i = 0; i < images.length; i++) {
+      formData.append("images", images[i]);
+    }
+
+    const admintoken = localStorage.getItem("admintoken");
+
+    await axios.post(
+      `${import.meta.env.VITE_BACKENDURL}/admin/add-product`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${admintoken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    // ✅ Update same toast to success
+    toast.update(toastId, {
+      render: "Product added successfully ✅",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
+
+  } catch (error) {
+    // ❌ Update same toast to error
+    toast.update(toastId, {
+      render: error.response?.data?.msg || "Add product failed ❌",
+      type: "error",
+      isLoading: false,
+      autoClose: 2500,
+    });
+  }
+};
+
 
   return (
     <>

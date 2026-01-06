@@ -1,15 +1,26 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, increaseQuantity } from "../cartSlice";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const VISIBLE_THUMBS = 5;
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.mycart.cart);
 
   const [data, setData] = useState({});
   const [activeImage, setActiveImage] = useState("");
   const [hover, setHover] = useState(false);
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [thumbStart, setThumbStart] = useState(0);
 
+  /* ===== FETCH PRODUCT ===== */
   useEffect(() => {
     if (!id) return;
 
@@ -18,12 +29,13 @@ const ProductDetail = () => {
         `${import.meta.env.VITE_BACKENDURL}/product/${id}`
       );
       setData(res.data);
-      setActiveImage(res.data.defaultImage);
+      setActiveImage(res.data.defaultImage || res.data.images?.[0]);
     };
 
     fetchProduct();
   }, [id]);
 
+  /* ===== ZOOM MOVE ===== */
   const handleMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -31,7 +43,57 @@ const ProductDetail = () => {
     setZoomPos({ x, y });
   };
 
+  const images = data.images || [];
+  const canPrev = thumbStart > 0;
+  const canNext = thumbStart + VISIBLE_THUMBS < images.length;
   const starRating = Number(data.starRating) || 0;
+
+  /* ===== ADD TO CART ===== */
+  const handleAddToCart = () => {
+    const existingItem = cart.find((item) => item.id === data._id);
+
+    if (existingItem) {
+      dispatch(increaseQuantity(existingItem));
+      toast.info("Item quantity increased 🛒", { autoClose: 1200 });
+    } else {
+      dispatch(
+        addToCart({
+          id: data._id,
+          name: data.name,
+          category: data.category,
+          price: data.price,
+          image: data.defaultImage,
+          qnty: 1,
+        })
+      );
+      toast.success("Added to cart 🛒", { autoClose: 1200 });
+    }
+  };
+
+  /* ===== BUY NOW (SAME LOGIC + REDIRECT) ===== */
+  const handleBuyNow = () => {
+    const existingItem = cart.find((item) => item.id === data._id);
+
+    if (existingItem) {
+      dispatch(increaseQuantity(existingItem));
+    } else {
+      dispatch(
+        addToCart({
+          id: data._id,
+          name: data.name,
+          price: data.price,
+          image: data.defaultImage,
+          qnty: 1,
+        })
+      );
+    }
+
+    toast.success("Proceeding to checkout 🧾", { autoClose: 1000 });
+
+    setTimeout(() => {
+      navigate("/checkout");
+    }, 600);
+  };
 
   return (
     <>
@@ -52,17 +114,31 @@ const ProductDetail = () => {
           padding: 50px;
           display: flex;
           gap: 60px;
-          position: relative;
         }
 
-        /* ===== IMAGE AREA ===== */
         .image-zone {
           display: flex;
           gap: 38px;
           position: relative;
         }
 
-        /* LEFT BANNER */
+        .thumb-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .arrow-btn {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          border: 1px solid #ddd;
+          background: #ffffff;
+          cursor: pointer;
+          font-size: 18px;
+        }
+
         .thumbs {
           display: flex;
           flex-direction: column;
@@ -70,21 +146,20 @@ const ProductDetail = () => {
         }
 
         .thumbs img {
-          width: 80px;
-          height: 80px;
+          width: 55px;
+          height: 55px;
           object-fit: cover;
           border-radius: 14px;
           border: 1px solid #ddd;
           cursor: pointer;
-          background: #fff;
           padding: 7px;
+          background: #fff;
         }
 
         .thumbs img.active {
           border: 2px solid #5f23c6;
         }
 
-        /* MAIN IMAGE */
         .image-box {
           width: 420px;
           height: 420px;
@@ -103,7 +178,6 @@ const ProductDetail = () => {
           object-fit: contain;
         }
 
-        /* ZOOM OVERLAY */
         .zoom-overlay {
           position: absolute;
           top: -60px;
@@ -119,7 +193,6 @@ const ProductDetail = () => {
           z-index: 999;
         }
 
-        /* ===== DETAILS ===== */
         .details {
           flex: 1;
           padding-left: 20px;
@@ -203,54 +276,81 @@ const ProductDetail = () => {
         }
 
         .cart {
-          background: #2e0b6aff;
-          color: #ffffff;
+          background: #2e0b6a;
+          color: #fff;
           border: none;
         }
 
         .buy {
           background: #0f172a;
-          color: #ffffff;
+          color: #fff;
           border: none;
         }
-        
-        /* Add to Cart hover */
-.btn.cart:hover {
-  background: #3b1391; /* slightly lighter purple */
-  box-shadow: 0 10px 25px rgba(46, 11, 106, 0.35);
-  transform: translateY(-1px);
-  color: #ffffff;
-}
 
-/* Buy Now hover */
-.btn.buy:hover {
-  background: #1e293b; /* softer dark */
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4);
-  transform: translateY(-1px);
-  color: #ffffff;
-}
+        .btn.cart:hover {
+          background: #3b1391;
+          box-shadow: 0 10px 25px rgba(46, 11, 106, 0.35);
+          transform: translateY(-1px);
+          color: white;
+        }
 
-/* Optional: click feedback */
-.btn:active {
-  transform: translateY(0);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-}
+        .btn.buy:hover {
+          background: #1e293b;
+          box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4);
+          transform: translateY(-1px);
+          color: white;
+        }
       `}</style>
 
       {/* ================= UI ================= */}
       <div className="product-page">
         <div className="product-container">
-          {/* IMAGE + ZOOM */}
+          {/* IMAGE SECTION */}
           <div className="image-zone">
-            <div className="thumbs">
-              {data.images?.map((img, i) => (
-                <img
-                  key={i}
-                  src={img}
-                  className={activeImage === img ? "active" : ""}
-                  onClick={() => setActiveImage(img)}
-                />
-              ))}
+            <div className="thumb-wrapper">
+              <button className="arrow-btn" onClick={() => canPrev && setThumbStart((p) => p - 1)}>
+                ‹
+              </button>
+
+              <div className="thumbs">
+                {images.slice(thumbStart, thumbStart + VISIBLE_THUMBS).map((img, i) => {
+                  const remaining = images.length - (thumbStart + VISIBLE_THUMBS);
+                  const isLast = i === VISIBLE_THUMBS - 1;
+
+                  return (
+                    <div key={thumbStart + i} style={{ position: "relative" }}>
+                      <img
+                        src={img}
+                        className={activeImage === img ? "active" : ""}
+                        onClick={() => setActiveImage(img)}
+                      />
+                      {isLast && remaining > 0 && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            inset: 0,
+                            background: "rgba(0,0,0,0.55)",
+                            borderRadius: "14px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#fff",
+                            fontSize: "13px",
+                            fontWeight: "600",
+                            pointerEvents: "none",
+                          }}
+                        >
+                          +{remaining} more
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button className="arrow-btn" onClick={() => canNext && setThumbStart((p) => p + 1)}>
+                ›
+              </button>
             </div>
 
             <div
@@ -259,10 +359,10 @@ const ProductDetail = () => {
               onMouseLeave={() => setHover(false)}
               onMouseMove={handleMove}
             >
-              <img src={activeImage} alt={data.name} />
+              {activeImage && <img src={activeImage} alt={data.name} />}
             </div>
 
-            {hover && (
+            {hover && activeImage && (
               <div
                 className="zoom-overlay"
                 style={{
@@ -292,17 +392,21 @@ const ProductDetail = () => {
             <p className="desc">{data.description}</p>
 
             <p className="meta">✔ In stock • Free delivery • Easy returns</p>
-            <p className="meta-muted">
-              🛡 1-year warranty • Secure payments • 7-day replacement
-            </p>
+            <p className="meta-muted">🛡 1-year warranty • Secure payments • 7-day replacement</p>
 
             <div className="actions">
-              <button className="btn cart">Add to Cart</button>
-              <button className="btn buy">Buy Now</button>
+              <button className="btn cart" onClick={handleAddToCart}>
+                Add to Cart
+              </button>
+              <button className="btn buy" onClick={handleBuyNow}>
+                Buy Now
+              </button>
             </div>
           </div>
         </div>
       </div>
+
+      <ToastContainer position="top-right" autoClose={1500} />
     </>
   );
 };
