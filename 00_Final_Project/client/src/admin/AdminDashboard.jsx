@@ -186,7 +186,7 @@ const AdminDashboard = () => {
 
         .content-card h3 {
           margin-bottom: 10px;
-          font-size: 20px;
+          font-size: 18px;
         }
 
         .loading {

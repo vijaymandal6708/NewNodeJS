@@ -8,6 +8,7 @@ route.post("/add-product", adminAuth, AdminController.addProduct);
 route.get("/dashboard-stats", adminAuth, AdminController.getDashboardStats);
 route.get("/orders", adminAuth, AdminController.getAllOrders);
 route.get("/products", adminAuth, AdminController.getProductsWithStock);
+route.get("/get-product-for-edit/:id", adminAuth, AdminController.getProductToEdit);
 
 
 

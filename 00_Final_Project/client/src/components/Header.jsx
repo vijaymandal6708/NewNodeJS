@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaRegHeart } from "react-icons/fa";
 import { FiShoppingCart } from "react-icons/fi";
@@ -12,15 +12,34 @@ const Header = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
   const cartData = useSelector((state) => state.mycart.cart);
   const wishlistData = useSelector((state) => state.mycart.wishlist);
 
-  const cartLength = cartData.length;
-  const wishlistLength = wishlistData.length;
-
   const debounceRef = useRef(null);
+  const hideTimeoutRef = useRef(null);
 
-  // 🔍 Auto-suggest (NO layout impact)
+  /* ===== RESET SEARCH (USED EVERYWHERE) ===== */
+  const resetSearch = () => {
+    setSearchText("");
+    setSuggestions([]);
+    setShowSuggestions(false);
+  };
+
+  /* ===== KEEP SEARCH TEXT ONLY ON SEARCH PAGE ===== */
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get("q");
+
+    if (location.pathname === "/search" && q) {
+      setSearchText(q);
+    } else {
+      resetSearch();
+    }
+  }, [location.pathname, location.search]);
+
+  /* ===== AUTO SUGGEST ===== */
   useEffect(() => {
     if (!searchText.trim()) {
       setSuggestions([]);
@@ -45,24 +64,41 @@ const Header = () => {
     return () => clearTimeout(debounceRef.current);
   }, [searchText]);
 
+  /* ===== SEARCH ACTION ===== */
   const handleSearch = () => {
     if (!searchText.trim()) return;
     setShowSuggestions(false);
-    navigate(`/search?q=${searchText}`);
+    navigate(`/search?q=${encodeURIComponent(searchText)}`);
   };
 
-  const handleSelect = (id) => {
+  /* ===== SUGGESTION CLICK ===== */
+  const handleSuggestionClick = (name) => {
     setShowSuggestions(false);
-    setSearchText("");
-    navigate(`/product/${id}`);
+    navigate(`/search?q=${encodeURIComponent(name)}`);
+  };
+
+  /* ===== PREVENT FLICKER ON SLOW MOUSE ===== */
+  const handleMouseLeave = () => {
+    hideTimeoutRef.current = setTimeout(() => {
+      setShowSuggestions(false);
+    }, 120);
+  };
+
+  const handleMouseEnter = () => {
+    clearTimeout(hideTimeoutRef.current);
+    if (searchText && suggestions.length > 0) {
+      setShowSuggestions(true);
+    }
   };
 
   return (
     <>
       <style>{`
-        * {
-          font-family: sans-serif;
-          box-sizing: border-box;
+        * { box-sizing: border-box; font-family: sans-serif; }
+
+        a {
+          text-decoration: none;
+          font-style: italic;
         }
 
         .header-container {
@@ -72,8 +108,7 @@ const Header = () => {
           width: 100%;
           z-index: 2000;
           background: white;
-}
-
+        }
 
         .top-header-container {
           height: 65px;
@@ -88,6 +123,11 @@ const Header = () => {
           align-items: center;
           gap: 25px;
           font-size: 14px;
+        }
+
+        .left-container a {
+          color: black;
+          font-weight: 500;
         }
 
         .logo {
@@ -112,64 +152,51 @@ const Header = () => {
           opacity: 0.4;
         }
 
-        .left-container a {
-          text-decoration: none;
-          color: black;
-          font-weight: 500;
-          font-style: italic;
-        }
-
         .right-container {
           display: flex;
-          height: 100%;
           width: 90px;
         }
 
         .wishlist-container,
         .cart-container {
-          height: 100%;
           width: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           position: relative;
           cursor: pointer;
+          font-size: 20px;
         }
 
         .wishlist-container span,
         .cart-container span {
           position: absolute;
-          top: -2px;
+          top: -4px;
           right: -2px;
-          font-size: 11px;
+          font-size: 7px;
           background: red;
           color: white;
           border-radius: 50%;
-          padding: 2px 6px;
-          line-height: 1;
-          z-index: 2;
-        }
-
-        .wishlist-container svg,
-        .cart-container svg {
-          font-size: 20px;
+          padding: 2px 5px;
+          font-weight: 700;
         }
 
         .bottom-header-container {
+          position: relative;
+          height: 69px;
           display: flex;
           padding: 17px 220px;
           background: #0c0243;
           gap: 25px;
+          overflow: visible;
         }
 
         .bottom-header-container a {
           color: white;
-          text-decoration: none;
           font-weight: 600;
-          margin-top: 3px;
         }
 
-        /* ===== SEARCH BAR (UNCHANGED) ===== */
+        /* ===== SEARCH BAR ===== */
         .search-bar {
           height: 35px;
           width: 700px;
@@ -179,8 +206,7 @@ const Header = () => {
           align-items: center;
           font-size: 14px;
           margin-right: 430px;
-          overflow: visible;     /* 🔑 allow dropdown */
-          position: relative;    /* 🔑 anchor dropdown */
+          position: relative;
         }
 
         .search-icon {
@@ -206,7 +232,7 @@ const Header = () => {
           cursor: pointer;
         }
 
-        /* ===== AUTOSUGGEST (NEW, NO LAYOUT SHIFT) ===== */
+        /* ===== SUGGESTIONS ===== */
         .suggestions {
           position: absolute;
           top: 38px;
@@ -215,20 +241,17 @@ const Header = () => {
           background: white;
           border-radius: 6px;
           box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-          z-index: 9999;
           max-height: 250px;
           overflow-y: auto;
+          z-index: 9999;
         }
 
         .suggestion-item {
           padding: 10px 16px;
           cursor: pointer;
           font-size: 14px;
-          color: #222;
           border-bottom: 1px solid #eee;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          text-transform: lowercase;
         }
 
         .suggestion-item:hover {
@@ -237,36 +260,47 @@ const Header = () => {
 
         .profile {
           width: 35px;
-          background-color: white;
+          background: white;
           aspect-ratio: 1 / 1;
           border-radius: 50%;
-          flex-shrink: 0;
         }
       `}</style>
 
       <div className="header-container">
         <div className="top-header-container">
           <div className="left-container">
-            <div className="logo" onClick={() => navigate("/home")}>
+            <div
+              className="logo"
+              onClick={() => {
+                resetSearch();
+                navigate("/home");
+              }}
+            >
               <div className="circle"></div>
               <p>.Gadget Galaxy</p>
             </div>
 
-            <Link to="/home">Home</Link>
-            <Link to="/categories/smartphones">Smartphones</Link>
-            <Link to="/categories/laptops">Laptops</Link>
-            <Link to="/categories/speakers">Speakers</Link>
-            <Link to="/categories/cameras">Cameras</Link>
+            <Link to="/home" onClick={resetSearch}>Home</Link>
+            <Link to="/categories/smartphones" onClick={resetSearch}>Smartphones</Link>
+            <Link to="/categories/laptops" onClick={resetSearch}>Laptops</Link>
+            <Link to="/categories/speakers" onClick={resetSearch}>Speakers</Link>
+            <Link to="/categories/cameras" onClick={resetSearch}>Cameras</Link>
           </div>
 
           <div className="right-container">
             <div className="wishlist-container">
-              <span>{wishlistLength}</span>
+              <span>{wishlistData.length}</span>
               <FaRegHeart />
             </div>
 
-            <div className="cart-container" onClick={() => navigate("/cart")}>
-              <span>{cartLength}</span>
+            <div
+              className="cart-container"
+              onClick={() => {
+                resetSearch();
+                navigate("/cart");
+              }}
+            >
+              <span>{cartData.length}</span>
               <FiShoppingCart />
             </div>
           </div>
@@ -275,22 +309,17 @@ const Header = () => {
         <div className="bottom-header-container">
           <div
             className="search-bar"
-            onMouseEnter={() => {
-              if (searchText && suggestions.length > 0) {
-                setShowSuggestions(true);
-              }
-            }}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
             <div className="search-icon">
               <IoSearchOutline />
             </div>
 
             <input
-              type="text"
-              placeholder="Search products"
               value={searchText}
+              placeholder="Search products"
               onChange={(e) => setSearchText(e.target.value)}
-              onFocus={() => searchText && setShowSuggestions(true)}
               onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
 
@@ -299,24 +328,23 @@ const Header = () => {
             </div>
 
             {showSuggestions && suggestions.length > 0 && (
-              <div
-                className="suggestions"
-                onMouseLeave={() => setShowSuggestions(false)}
-              >
+              <div className="suggestions">
                 {suggestions.map((item) => (
                   <div
                     key={item._id}
-                    className="suggestion-item name-only"
-                    onMouseDown={() => handleSelect(item._id)}
+                    className="suggestion-item"
+                    onMouseDown={() =>
+                      handleSuggestionClick(item.name.toLowerCase())
+                    }
                   >
-                    {item.name}
+                    {item.name.toLowerCase()}
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <Link to="/login">Login</Link>
+          <Link to="/login" onClick={resetSearch}>Login</Link>
           <div className="profile"></div>
         </div>
       </div>

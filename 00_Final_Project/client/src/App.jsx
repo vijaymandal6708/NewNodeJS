@@ -27,6 +27,7 @@ import Speakers from "./pages/categories/Speakers";
 import Cameras from "./pages/categories/Cameras";
 import SearchResults from "./pages/SearchResults";
 import Wishlist from "./Wishlist";
+import AdminEditProduct from "./admin/ProductEditPage";
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
           <Route path="add-product" element={<AddProduct />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="products" element={<AdminProducts />} />
+          <Route path="edit-product/:id" element={<AdminEditProduct />} />
         </Route>
       </Route>
 

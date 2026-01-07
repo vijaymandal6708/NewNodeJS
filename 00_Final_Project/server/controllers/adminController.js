@@ -279,6 +279,25 @@ const getProductsWithStock = async (req, res) => {
   }
 };
 
+const getProductToEdit = async (req, res) => {
+  try {
+    const product = await ProductModel.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (err) {
+    console.error("Admin get product error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 
 module.exports = {
   adminLogin,
@@ -286,4 +305,5 @@ module.exports = {
   getDashboardStats,
   getAllOrders,
   getProductsWithStock,
+  getProductToEdit,
 };

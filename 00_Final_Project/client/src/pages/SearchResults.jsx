@@ -59,7 +59,7 @@ const SearchResults = () => {
         }
 
         .section-header h2 {
-          font-size: 28px;
+          font-size: 22px;
           font-weight: bold;
           color: #222;
           margin-bottom: 4px;
