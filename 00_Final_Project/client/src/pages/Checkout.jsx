@@ -131,7 +131,7 @@ const Checkout = () => {
       );
 
       new window.Razorpay({
-        key: "rzp_test_Rw76xQgbll2xwW",
+        key: `${import.meta.env.VITE_RAZORPAY_KEY_ID}`,
         amount: orderRes.data.data.amount,
         currency: "INR",
         name: "Gadget Galaxy",
