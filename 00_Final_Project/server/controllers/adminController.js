@@ -297,6 +297,127 @@ const getProductToEdit = async (req, res) => {
   }
 };
 
+const updateProduct = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      console.error("Upload error:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Image upload failed",
+      });
+    }
+
+    try {
+      const { id } = req.params;
+
+      const product = await ProductModel.findById(id);
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Product not found",
+        });
+      }
+
+      /* ================= SAFE BODY PARSING ================= */
+      const name = req.body.name;
+      const category = req.body.category;
+      const price = req.body.price;
+      const quantity = req.body.quantity;
+      const description = req.body.description;
+
+      /* ================= DELETE IMAGES ================= */
+      let updatedImages = [...product.images];
+
+      if (req.body.deletedImages) {
+        const imagesToDelete = Array.isArray(req.body.deletedImages)
+          ? req.body.deletedImages
+          : [req.body.deletedImages];
+
+        updatedImages = updatedImages.filter(
+          (img) => !imagesToDelete.includes(img)
+        );
+      }
+
+      /* ================= ADD NEW IMAGES ================= */
+      if (req.files && req.files.length > 0) {
+        const newImageUrls = req.files.map((file) => file.path);
+        updatedImages.push(...newImageUrls);
+      }
+
+      /* ================= UPDATE PRODUCT ================= */
+      product.name = name;
+      product.category = category;
+      product.price = price;
+      product.quantity = quantity;
+      product.description = description;
+      product.images = updatedImages;
+      product.defaultImage = updatedImages[0] || "";
+      product.starRating = Number(product.starRating) || 0;
+
+      await product.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Product updated successfully",
+        product,
+      });
+    } catch (error) {
+      console.error("❌ UPDATE PRODUCT ERROR:", error);
+      res.status(500).json({
+        success: false,
+        message: "Server error",
+      });
+    }
+  });
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await ProductModel.findById(id);
+
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    /* ===== DELETE IMAGES FROM CLOUDINARY ===== */
+    if (product.images && product.images.length > 0) {
+      for (const imgUrl of product.images) {
+        try {
+          const publicId = imgUrl
+            .split("/")
+            .slice(-1)[0]
+            .split(".")[0];
+
+          await cloudinary.uploader.destroy(
+            `product_images/${publicId}`
+          );
+        } catch (err) {
+          console.error("Cloudinary delete error:", err.message);
+        }
+      }
+    }
+
+    /* ===== DELETE PRODUCT FROM DB ===== */
+    await ProductModel.findByIdAndDelete(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Product deleted successfully",
+    });
+  } catch (error) {
+    console.error("❌ DELETE PRODUCT ERROR:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete product",
+    });
+  }
+};
+
 
 
 module.exports = {
@@ -306,4 +427,6 @@ module.exports = {
   getAllOrders,
   getProductsWithStock,
   getProductToEdit,
+  updateProduct,
+  deleteProduct,
 };

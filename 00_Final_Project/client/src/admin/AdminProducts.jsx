@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  /* ================= FETCH PRODUCTS ================= */
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -32,8 +35,118 @@ const AdminProducts = () => {
     fetchProducts();
   }, []);
 
+  /* ================= DELETE CONFIRM TOAST ================= */
+const handleDelete = async (id) => {
+  toast.warn(
+    ({ closeToast }) => (
+      <div>
+        <p style={{ marginBottom: "10px", fontWeight: 600 }}>
+          Are you sure you want to delete this product?
+        </p>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            style={{
+              background: "#dc2626",
+              color: "#fff",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+            onClick={async () => {
+              closeToast();
+
+              // 🔄 Loader toast
+              const toastId = toast.loading("Deleting product...");
+
+              try {
+                const admintoken = localStorage.getItem("admintoken");
+
+                await axios.delete(
+                  `http://localhost:8000/admin/delete-product/${id}`,
+                  {
+                    headers: {
+                      Authorization: `Bearer ${admintoken}`,
+                    },
+                  }
+                );
+
+                // ✅ Update toast to success
+                toast.update(toastId, {
+                  render: "Product deleted successfully ✅",
+                  type: "success",
+                  isLoading: false,
+                  autoClose: 2000,
+                });
+
+                // ✅ Remove from UI
+                setProducts((prev) =>
+                  prev.filter((p) => p._id !== id)
+                );
+              } catch (err) {
+                toast.update(toastId, {
+                  render: "Failed to delete product ❌",
+                  type: "error",
+                  isLoading: false,
+                  autoClose: 2500,
+                });
+              }
+            }}
+          >
+            Yes, Delete
+          </button>
+
+          <button
+            style={{
+              background: "#e5e7eb",
+              border: "none",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+            onClick={closeToast}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ),
+    {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+    }
+  );
+};
+
+  /* ================= DELETE API ================= */
+  const confirmDeleteProduct = async (id) => {
+    try {
+      const admintoken = localStorage.getItem("admintoken");
+
+      await axios.delete(
+        `http://localhost:8000/admin/delete-product/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${admintoken}`,
+          },
+        }
+      );
+
+      setProducts((prev) => prev.filter((p) => p._id !== id));
+
+      toast.success("Product deleted successfully 🗑️");
+    } catch (err) {
+      console.error("Delete product failed", err);
+      toast.error("Failed to delete product ❌");
+    }
+  };
+
   return (
     <>
+      <ToastContainer position="top-right" autoClose={3000} />
+
       <style>{`
         * {
           box-sizing: border-box;
@@ -80,8 +193,8 @@ const AdminProducts = () => {
           font-weight: 600;
           text-align: left;
         }
-        
-        .product-text-heading{
+
+        .product-text-heading {
           padding-left: 130px;
         }
 
@@ -96,12 +209,11 @@ const AdminProducts = () => {
           background: #f9fafb;
         }
 
-        /* ===== PRODUCT CELL ===== */
         .product-cell {
           display: flex;
           align-items: center;
           gap: 26px;
-          margin-left: 20px
+          margin-left: 20px;
         }
 
         .product-cell img {
@@ -166,7 +278,11 @@ const AdminProducts = () => {
           font-weight: 600;
         }
 
-        /* ===== ACTIONS ===== */
+        .action-buttons {
+          display: flex;
+          gap: 10px;
+        }
+
         .edit-btn {
           padding: 8px 14px;
           border-radius: 8px;
@@ -181,6 +297,20 @@ const AdminProducts = () => {
           background: #1e293b;
         }
 
+        .delete-btn {
+          padding: 8px 14px;
+          border-radius: 8px;
+          border: none;
+          background: #dc2626;
+          color: #fff;
+          font-size: 13px;
+          cursor: pointer;
+        }
+
+        .delete-btn:hover {
+          background: #b91c1c;
+        }
+
         .empty {
           text-align: center;
           padding: 100px;
@@ -190,7 +320,7 @@ const AdminProducts = () => {
       `}</style>
 
       <div className="page">
-        <h2 className="title">Products & Inventory</h2>
+        <h2 className="title">Products & Stocks</h2>
 
         {loading ? (
           <p className="empty">Loading products...</p>
@@ -214,27 +344,17 @@ const AdminProducts = () => {
                     <td>
                       <div className="product-cell">
                         <img src={p.defaultImage} alt={p.name} />
-
                         <div className="product-info">
                           <div className="product-name">{p.name}</div>
-
-                          <div className="sku">
-                            SKU: GG-{p._id.slice(-6).toUpperCase()}
-                          </div>
-
+                          <div className="sku">Product id : {p._id}</div>
                           <div className="meta-row">
-                            <span className="badge category">
-                              {p.category}
-                            </span>
-
+                            <span className="badge category">{p.category}</span>
                             <span
                               className={`badge ${
                                 p.quantity === 0 ? "out" : "active"
                               }`}
                             >
-                              {p.quantity === 0
-                                ? "Out of Stock"
-                                : "Active"}
+                              {p.quantity === 0 ? "Out of Stock" : "Active"}
                             </span>
                           </div>
                         </div>
@@ -242,18 +362,28 @@ const AdminProducts = () => {
                     </td>
 
                     <td className="price">₹{p.price}</td>
-
                     <td className="stock">{p.quantity}</td>
 
                     <td>
-                      <button
-                        className="edit-btn"
-                        onClick={() =>
-                          navigate(`/admin-dashboard/edit-product/${p._id}`)
-                        }
-                      >
-                        Edit
-                      </button>
+                      <div className="action-buttons">
+                        <button
+                          className="edit-btn"
+                          onClick={() =>
+                            navigate(
+                              `/admin-dashboard/edit-product/${p._id}`
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDelete(p._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

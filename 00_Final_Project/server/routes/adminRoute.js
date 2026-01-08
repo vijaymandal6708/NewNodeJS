@@ -9,8 +9,11 @@ route.get("/dashboard-stats", adminAuth, AdminController.getDashboardStats);
 route.get("/orders", adminAuth, AdminController.getAllOrders);
 route.get("/products", adminAuth, AdminController.getProductsWithStock);
 route.get("/get-product-for-edit/:id", adminAuth, AdminController.getProductToEdit);
+route.put("/update-product/:id", adminAuth, AdminController.updateProduct);
+route.delete(
+  "/delete-product/:id",
+  adminAuth,
+  AdminController.deleteProduct
+);
 
-
-
-
-module.exports= route;
+module.exports = route;

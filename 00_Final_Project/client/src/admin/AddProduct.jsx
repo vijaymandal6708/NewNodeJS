@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 const AddProduct = () => {
   const [input, setInput] = useState({});
   const [images, setImages] = useState([]);
+  const [previewImages, setPreviewImages] = useState([]);
 
   const handleInput = (e) => {
     setInput((values) => ({
@@ -15,65 +16,78 @@ const AddProduct = () => {
   };
 
   const handleImage = (e) => {
-    setImages(e.target.files);
+    const files = Array.from(e.target.files);
+    setImages(files);
+
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setPreviewImages(previews);
+  };
+
+  /* ❌ REMOVE IMAGE (UI ONLY) */
+  const handleRemoveImage = (index) => {
+    const updatedImages = [...images];
+    const updatedPreviews = [...previewImages];
+
+    updatedImages.splice(index, 1);
+    updatedPreviews.splice(index, 1);
+
+    setImages(updatedImages);
+    setPreviewImages(updatedPreviews);
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // 🔔 Show loading toast
-  const toastId = toast.loading("Adding product...");
+    const toastId = toast.loading("Adding product...");
 
-  try {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    for (let key in input) {
-      formData.append(key, input[key]);
-    }
-
-    for (let i = 0; i < images.length; i++) {
-      formData.append("images", images[i]);
-    }
-
-    const admintoken = localStorage.getItem("admintoken");
-
-    await axios.post(
-      `${import.meta.env.VITE_BACKENDURL}/admin/add-product`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${admintoken}`,
-          "Content-Type": "multipart/form-data",
-        },
+      for (let key in input) {
+        formData.append(key, input[key]);
       }
-    );
 
-    // ✅ Update same toast to success
-    toast.update(toastId, {
-      render: "Product added successfully ✅",
-      type: "success",
-      isLoading: false,
-      autoClose: 2000,
-    });
+      for (let i = 0; i < images.length; i++) {
+        formData.append("images", images[i]);
+      }
 
-  } catch (error) {
-    // ❌ Update same toast to error
-    toast.update(toastId, {
-      render: error.response?.data?.msg || "Add product failed ❌",
-      type: "error",
-      isLoading: false,
-      autoClose: 2500,
-    });
-  }
-};
+      const admintoken = localStorage.getItem("admintoken");
 
+      await axios.post(
+        `${import.meta.env.VITE_BACKENDURL}/admin/add-product`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${admintoken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      toast.update(toastId, {
+        render: "Product added successfully ✅",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+
+      setImages([]);
+      setPreviewImages([]);
+
+    } catch (error) {
+      toast.update(toastId, {
+        render: error.response?.data?.msg || "Add product failed ❌",
+        type: "error",
+        isLoading: false,
+        autoClose: 2500,
+      });
+    }
+  };
 
   return (
     <>
-      {/* ================= TOAST ================= */}
       <ToastContainer position="top-right" autoClose={2000} />
 
-      {/* ================= INLINE CSS ================= */}
       <style>{`
         :root {
           --primary: #5b21b6;
@@ -137,13 +151,6 @@ const AddProduct = () => {
           outline: none;
         }
 
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-          border-color: var(--primary);
-        }
-
-        /* ===== CENTER FILE INPUT TEXT ===== */
         .file-input {
           text-align: center;
           cursor: pointer;
@@ -157,10 +164,6 @@ const AddProduct = () => {
           color: #fff;
           cursor: pointer;
           margin-right: 12px;
-        }
-
-        .file-input::file-selector-button:hover {
-          background: #4c1d95;
         }
 
         .full-width {
@@ -177,30 +180,55 @@ const AddProduct = () => {
           font-weight: 500;
           border-radius: 12px;
           cursor: pointer;
-          transition: 0.3s;
           width: 100%;
         }
 
-        .submit-btn:hover {
-          background: #4c1d95;
+        /* ===== IMAGE PREVIEW ===== */
+        .image-preview-grid {
+          margin-top: 18px;
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+          gap: 8px;
         }
 
-        @media (max-width: 768px) {
-          .form-grid {
-            grid-template-columns: 1fr;
-          }
+        .image-card {
+          position: relative;
+          background: #f1f1f1;
+          border-radius: 12px;
+          padding: 10px;
+          height: 80px;
+          width: 80px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
 
-          .add-product-page {
-            padding: 20px;
-          }
+        .image-card img {
+          max-width: 100%;
+          max-height: 100%;
+          object-fit: contain;
+        }
 
-          .product-form {
-            padding: 30px;
-          }
+        /* ❌ CROSS BUTTON */
+        .remove-btn {
+          position: absolute;
+          top: 6px;
+          right: 6px;
+          width: 22px;
+          height: 22px;
+          border-radius: 50%;
+          border: none;
+          background: rgba(0,0,0,0.65);
+          color: white;
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        .remove-btn:hover {
+          background: red;
         }
       `}</style>
 
-      {/* ================= JSX ================= */}
       <div className="add-product-page">
         <form className="product-form" onSubmit={handleSubmit}>
           <h1 className="page-title">Add New Product</h1>
@@ -216,7 +244,7 @@ const AddProduct = () => {
               <select name="category" onChange={handleInput} required>
                 <option value="">Select category</option>
                 <option>Smartphone</option>
-                <option>Laptop</option> 
+                <option>Laptop</option>
                 <option>Speaker</option>
                 <option>Camera</option>
               </select>
@@ -270,6 +298,21 @@ const AddProduct = () => {
               className="file-input"
               onChange={handleImage}
             />
+
+            <div className="image-preview-grid">
+              {previewImages.map((img, index) => (
+                <div key={index} className="image-card">
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    onClick={() => handleRemoveImage(index)}
+                  >
+                    ✕
+                  </button>
+                  <img src={img} alt="preview" />
+                </div>
+              ))}
+            </div>
           </div>
 
           <button type="submit" className="submit-btn">

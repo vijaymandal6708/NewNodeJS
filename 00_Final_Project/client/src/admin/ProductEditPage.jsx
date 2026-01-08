@@ -59,9 +59,56 @@ const AdminEditProduct = () => {
     }));
   };
 
+  const confirmSave = (e) => {
+  e.preventDefault();
+
+  toast(
+    ({ closeToast }) => (
+      <div>
+        <p style={{ fontWeight: 600, marginBottom: 10 }}>
+          Are you sure you want to save changes?
+        </p>
+
+        <div style={{ display: "flex", gap: 10 }}>
+          <button
+            onClick={() => {
+              closeToast();
+              handleUpdate(); // 👈 ACTUAL SAVE
+            }}
+            style={{
+              background: "#0f172a",
+              color: "#fff",
+              border: "none",
+              padding: "6px 14px",
+              borderRadius: 6,
+              cursor: "pointer",
+            }}
+          >
+            Yes, Save
+          </button>
+
+          <button
+            onClick={closeToast}
+            style={{
+              background: "#e5e7eb",
+              border: "none",
+              padding: "6px 14px",
+              borderRadius: 6,
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    ),
+    { autoClose: false }
+  );
+};
+
+
   /* ================= UPDATE PRODUCT ================= */
-  const handleUpdate = async (e) => {
-    e.preventDefault();
+  const handleUpdate = async () => {
     setSaving(true);
 
     try {
@@ -94,7 +141,7 @@ const AdminEditProduct = () => {
       );
 
       toast.success("Product updated successfully ✅");
-      setTimeout(() => navigate("/admin/products"), 1500);
+      setTimeout(() => navigate("/admin-dashboard/products"), 1500);
     } catch (err) {
       toast.error("Failed to update product ❌");
     } finally {
@@ -243,7 +290,7 @@ const AdminEditProduct = () => {
       <div className="page">
         <h2 className="title">Edit Product</h2>
 
-        <form className="card" onSubmit={handleUpdate}>
+        <form className="card" onSubmit={confirmSave}>
           <div className="form-group">
             <label>Product Name</label>
             <input

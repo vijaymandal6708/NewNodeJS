@@ -130,7 +130,6 @@ const AdminDashboard = () => {
         }
 
         .admin-layout {
-          display: flex;
           min-height: 100vh;
         }
 
@@ -139,6 +138,12 @@ const AdminDashboard = () => {
           background: #0f172a;
           color: #fff;
           padding: 24px;
+
+          position: fixed;
+          top: 134px;
+          left: 0;
+          height: 100vh;
+          overflow-y: auto;
         }
 
         .brand {
@@ -164,6 +169,7 @@ const AdminDashboard = () => {
         .admin-main {
           flex: 1;
           padding: 30px;
+          margin-left: 260px;
         }
 
         .admin-header {
