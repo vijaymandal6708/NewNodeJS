@@ -90,7 +90,7 @@ const AddProduct = () => {
 
       <style>{`
         :root {
-          --primary: #5b21b6;
+          --primary: #410d96;
           --bg: #f6f7fb;
           --card: #ffffff;
           --text: #1f2937;
