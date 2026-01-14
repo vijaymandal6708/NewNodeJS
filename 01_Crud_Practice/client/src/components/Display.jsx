@@ -11,6 +11,11 @@ const Display = () => {
         console.log(response.data);
     };
 
+    const handleDelete = async ()=>{
+        console.log();
+        await axios.delete(`http://localhost:9000/student/delete-student/${data._id}`);
+    }
+
     useEffect(()=>{
         loadData();
     },[]);
@@ -21,8 +26,10 @@ const Display = () => {
        <table border={1} align="center">
         <thead>
             <tr>
-                <th>Name : </th>
-                <th>Roll no : </th>
+                <th>Name</th>
+                <th>Roll no</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -31,6 +38,8 @@ const Display = () => {
                     <tr key={index}>
                         <td>{data.name}</td>
                         <td>{data.rollno}</td>
+                        <td><button>Edit</button></td>
+                        <td><button onClick={handleDelete}>Delete</button></td>
                     </tr>
                 ))
             }
