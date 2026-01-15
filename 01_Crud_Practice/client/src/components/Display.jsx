@@ -4,6 +4,7 @@ import axios from 'axios';
 const Display = () => {
 
     const [data,setData] = useState([]);
+    const [editData,setEditData] = useState({});
 
     const loadData = async ()=>{
         const response = await axios.get("http://localhost:9000/student/display-student");
@@ -11,9 +12,16 @@ const Display = () => {
         console.log(response.data);
     };
 
-    const handleDelete = async ()=>{
-        console.log();
-        await axios.delete(`http://localhost:9000/student/delete-student/${data._id}`);
+    const handleDelete = async (id)=>{
+        console.log(id);
+        await axios.delete(`http://localhost:9000/student/delete-student/${id}`);
+        loadData();
+    };
+
+    const handleEdit = async (id) =>{
+        console.log(id);
+        const response = await axios.get(`http://localhost:9000/student/open-edit-form/${id}`);
+        setEditData(response.data);
     }
 
     useEffect(()=>{
@@ -38,13 +46,20 @@ const Display = () => {
                     <tr key={index}>
                         <td>{data.name}</td>
                         <td>{data.rollno}</td>
-                        <td><button>Edit</button></td>
-                        <td><button onClick={handleDelete}>Delete</button></td>
+                        <td><button onClick={()=>{handleEdit(data._id)}}>Edit</button></td>
+                        <td><button onClick={()=>{handleDelete(data._id)}}>Delete</button></td>
                     </tr>
                 ))
             }
         </tbody>
        </table>
+       <br /> <br /> <br />
+
+       {
+        editData._id && <form>
+            Student Name : <input type="text" name="name" value={editData.name} />
+        </form>
+       }
     </div>
   )
 }
