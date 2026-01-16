@@ -24,6 +24,21 @@ const openEditForm = async (req,res)=>{
     console.log(req.params);
     const editData = await studentModel.findById(id);
     res.send(editData);
+};
+
+const finalEditStudent = async (req,res)=>{
+    console.log(req.params);
+    console.log(req.body);
+    const {id} = req.params;
+    await studentModel.findByIdAndUpdate(id,req.body);
+    res.send("student updated successfully");
+};
+
+const searchStudent = async (req,res)=>{
+    console.log(req.body);
+    const student = await studentModel.findOne(req.body);
+    console.log(student);
+    res.send(student);
 }
 
 
@@ -32,4 +47,6 @@ module.exports = {
     displayStudent,
     deleteStudent,
     openEditForm,
+    finalEditStudent,
+    searchStudent,
 }

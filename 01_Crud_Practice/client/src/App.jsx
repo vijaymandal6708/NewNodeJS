@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import Home from './components/Home';
 import Insert from './components/Insert';
 import Display from './components/Display';
+import Search from './components/Search';
 
 const App = () => {
   return (
@@ -15,6 +16,7 @@ const App = () => {
              <Route path="home" element={<Home/>}></Route>
              <Route path="insert" element={<Insert/>}></Route>
              <Route path="display" element={<Display/>}></Route>
+             <Route path="search" element={<Search/>}></Route>
            </Route>
         </Routes>
       </BrowserRouter> 

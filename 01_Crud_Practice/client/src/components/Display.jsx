@@ -22,6 +22,18 @@ const Display = () => {
         console.log(id);
         const response = await axios.get(`http://localhost:9000/student/open-edit-form/${id}`);
         setEditData(response.data);
+    };
+
+    const handleInput = async (e)=>{
+        console.log(e.target.value);
+        setEditData(()=>({...editData,[e.target.name]:e.target.value}));
+    };
+
+    const handleFinalEdit = async (id,e)=>{
+        e.preventDefault();
+        console.log(id);
+        await axios.put(`http://localhost:9000/student/final-edit-student/${id}`, editData);
+        loadData();
     }
 
     useEffect(()=>{
@@ -56,8 +68,10 @@ const Display = () => {
        <br /> <br /> <br />
 
        {
-        editData._id && <form>
-            Student Name : <input type="text" name="name" value={editData.name} />
+        editData._id && <form align="center" onSubmit={(e)=>{handleFinalEdit(editData._id,e)}}>
+            Student Name : <input type="text" name="name" value={editData.name} onChange={handleInput} /> <br /> <br />
+            Student Name : <input type="text" name="rollno" value={editData.rollno} onChange={handleInput} /> <br /> <br />
+            <button type="submit">Update Student Data</button>
         </form>
        }
     </div>
