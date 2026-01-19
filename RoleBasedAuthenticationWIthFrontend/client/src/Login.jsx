@@ -24,8 +24,8 @@ const Login = () => {
 
   return (
     <>
-      <input name="email" onChange={e => setData({...data, email:e.target.value})} />
-      <input name="password" type="password"
+      Enter Email : <input name="email" onChange={e => setData({...data, email:e.target.value})} />
+      Enter Password : <input name="password" type="password"
         onChange={e => setData({...data, password:e.target.value})} />
       <button onClick={handleLogin}>Login</button>
     </>
