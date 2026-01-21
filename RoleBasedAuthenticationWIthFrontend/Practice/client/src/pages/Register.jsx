@@ -19,8 +19,8 @@ const Register = () => {
     <>
       <h2>This is the register page</h2>
       Enter Name : <input type="text" name="name" onChange={handleInput} /> <br /> <br />
-      Enter Name : <input type="text" name="email" onChange={handleInput} /> <br /> <br />
-      Enter Name : <input type="text" name="password" onChange={handleInput} /> <br /> <br />
+      Enter Email : <input type="text" name="email" onChange={handleInput} /> <br /> <br />
+      Enter Password : <input type="text" name="password" onChange={handleInput} /> <br /> <br />
 
       <button type="submit" onClick={handleSubmit}>Register</button>
     </>
