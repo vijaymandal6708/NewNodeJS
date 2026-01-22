@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
 const Login = () => {
     
     const [data,setData] = useState({});
+
+    const navigate = useNavigate();
 
     const handleInput = async (e) => {
        setData({...data,[e.target.name]:e.target.value});
@@ -19,6 +22,8 @@ const Login = () => {
 
        console.log(response.data.token);
        alert(response.data.message);
+
+       navigate("/user-dashboard");
     };
 
   return (  

@@ -47,8 +47,15 @@ const userLogin = async(req,res)=>{
     });
 };
 
+const getUserDashboard = async (req,res)=>{
+    res.status(200).json({
+        message: "Profile route hit",
+        user: req.user
+    });
+}
 
 module.exports = {
     userRegister,
     userLogin,
+    getUserDashboard,
 }
