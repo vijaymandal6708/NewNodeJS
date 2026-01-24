@@ -23,7 +23,15 @@ const Login = () => {
        console.log(response.data.token);
        alert(response.data.message);
 
-       navigate("/user-dashboard");
+       const role = localStorage.getItem("role");
+       
+       if(role==="admin"){
+        navigate("/admin-dashboard");
+       }
+
+       else{
+        navigate("/user-dashboard");
+       }
     };
 
   return (  
