@@ -13,6 +13,14 @@ const AdminDashboard = () => {
         });
     };
 
+    const loadData=async()=>{
+        const response = await axios.get(`http://localhost:${import.meta.env.VITE_BACKEND_PORT}/api/dashboard/admin`, {
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        });
+    };
+
     useEffect(()=>{
         loadData();
     },[]);
