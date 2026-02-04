@@ -3,7 +3,7 @@ import React from 'react'
 const UserDashboard = () => {
   return (
     <>
-      <h1>This is the userdashboard</h1>
+      <h1>This is the UserDashboard page</h1>
     </>
   )
 }

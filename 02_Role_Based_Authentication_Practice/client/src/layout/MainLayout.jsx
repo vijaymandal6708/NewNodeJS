@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
-const Layout = () => {
+const MainLayout = () => {
   return (
     <>
       <header>
-        <Link to="/home"> Home | </Link>
+        <Link to="/home">Home | </Link>
         <Link to="/register"> Register | </Link>
         <Link to="/login"> Login</Link>
       </header>
@@ -17,4 +17,4 @@ const Layout = () => {
   )
 }
 
-export default Layout
+export default MainLayout
