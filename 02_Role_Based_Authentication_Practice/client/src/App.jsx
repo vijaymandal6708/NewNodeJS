@@ -3,6 +3,9 @@ import MainLayout from './layout/MainLayout';
 import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import UserDashboard from './pages/UserDashboard';
+
+import ProtectedRoute from './routes/ProtectedRoute';
 
 function App() {
 
@@ -15,6 +18,13 @@ function App() {
             <Route path="/home" element={<Home />}></Route>
             <Route path="/register" element={<Register />}></Route>
             <Route path="/login" element={<Login />}></Route>
+            <Route 
+              path="/user-dashboard" 
+              element={
+                <ProtectedRoute allowedRole="user">
+                  <UserDashboard />
+                </ProtectedRoute>}>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

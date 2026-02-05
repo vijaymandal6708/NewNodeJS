@@ -50,16 +50,23 @@ const userLogin = async (req,res)=>{
 
     const token = jwt.sign(
         {id:userFound._id, role:userFound.role},
-        
-    )
+        "vijay@1234",
+        {expiresIn:"1d"}
+    );
 
-    res.status(200).json({message:"user logged in successfully"});
+    res.status(200).json({message:"user logged in successfully",token, name:userFound.name,role:userFound.role});
 
+};
+
+const userDashboardValidate = async (req,res)=>{
+    console.log(req.headers.authorization);
+    res.send("okk");
 }
 
 
 module.exports = {
     userRegister,
     userLogin,
+    userDashboardValidate,
 }
 
