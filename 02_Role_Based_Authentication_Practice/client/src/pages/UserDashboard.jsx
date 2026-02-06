@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const UserDashboard = () => {
   const navigate = useNavigate();
+
+  const [user,setUser] = useState({});
 
   const loadData = async () => {
     const token = localStorage.getItem("token");
@@ -17,6 +19,10 @@ const UserDashboard = () => {
         },
       },
     );
+
+    console.log(response.data);
+
+    setUser(response.data);
   };
 
   useEffect(() => {
@@ -26,6 +32,11 @@ const UserDashboard = () => {
   return (
     <>
       <h1>This is the UserDashboard page</h1>
+      
+      <p>Your id is : {user._id}</p>
+      <p>Your name is : {user.name}</p>
+      <p>Your email is : {user.email}</p>
+      <p>Your role is : {user.role}</p>
     </>
   );
 };

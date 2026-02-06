@@ -59,8 +59,9 @@ const userLogin = async (req,res)=>{
 };
 
 const userDashboardValidate = async (req,res)=>{
-    console.log(req.headers.authorization);
-    res.send("okk");
+    const user = await userModel.findById(req.user.id).select("-password");
+    console.log(user);
+    res.json(user);
 }
 
 
