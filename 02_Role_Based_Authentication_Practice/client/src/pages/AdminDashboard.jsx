@@ -8,11 +8,7 @@ const AdminDashboard = () => {
 
     const response = await axios.get(
       "http://localhost:4000/user/user-dashboard-validate",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
+     
     );
 
     console.log(response.data);
