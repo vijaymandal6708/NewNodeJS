@@ -1,19 +1,28 @@
 import express from "express";
 import cors from "cors";
+import Razorpay from "razorpay";
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
-const products = [
-  { id: 1, name: "Headphones", price: 1500 },
-  { id: 2, name: "Smart Watch", price: 3000 },
-  { id: 3, name: "Bluetooth Speaker", price: 2000 }
-];
-
-app.get("/products", (req, res) => {
-  res.json(products);
+const razorpay = new Razorpay({
+  key_id: "rzp_test_SPo6d8iEYKD89U",
+  key_secret: "o15lCItRby266n0M0FW85JIA"
 });
 
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+app.post("/create-order", async (req,res)=>{
+  const options = {
+    amount : req.body.amount * 100,
+    currency : "INR",
+    receipt : "order_rcptid_11"
+  };
+
+  const order = await razorpay.orders.create(options);
+
+  res.json(order);
+})
+
+app.listen(4000, () => {
+  console.log("Server running on port 4000");
 });

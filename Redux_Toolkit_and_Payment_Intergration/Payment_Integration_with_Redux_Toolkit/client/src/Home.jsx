@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 
 function Home() {
     const products = [
-      {id:"1", name:"Boat Earbuds", price:"1699"},
-      {id:"2", name:"Realme Earbuds", price:"1399"},
-      {id:"3", name:"Boat Speaker", price:"1199"},
-      {id:"4", name:"Sony Speaker", price:"3799"},
-      {id:"5", name:"Oneplus 12 Smartphone", price:"59999"},
-      {id:"6", name:"Iphone 16 Pro Max", price:"159990"},
+      {id:"1", name:"Boat Earbuds", price:"169"},
+      {id:"2", name:"Realme Earbuds", price:"139"},
+      {id:"3", name:"Boat Speaker", price:"119"},
+      {id:"4", name:"Sony Speaker", price:"379"},
+      {id:"5", name:"Oneplus 12 Smartphone", price:"599"},
+      {id:"6", name:"Iphone 16 Pro Max", price:"15999"},
     ];
 
     const dispatch = useDispatch();
