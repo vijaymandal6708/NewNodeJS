@@ -7,10 +7,7 @@ function App() {
   const [image, setImage] = useState(null);
 
   const handleInput = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({...form,[e.target.name]: e.target.value,});
   };
 
   const handleSubmit = async (e) => {
@@ -25,6 +22,7 @@ function App() {
 
     await axios.post("http://localhost:5000/add-product", formData);
 
+    alert("product uploaded successfully");
     loadProducts();
   };
 

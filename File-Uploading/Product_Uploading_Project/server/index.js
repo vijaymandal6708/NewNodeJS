@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import multer from "multer";
 import cors from "cors";
 import fs from "fs";
+import dotenv from "dotenv";
 
 import Product from "./productModel.js";
 import cloudinary from "./cloudinary.js";
@@ -11,6 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+dotenv.config();
 
 mongoose.connect("mongodb://127.0.0.1:27017/product-detail-upload").then(()=>{
     console.log("mongodb connected");
