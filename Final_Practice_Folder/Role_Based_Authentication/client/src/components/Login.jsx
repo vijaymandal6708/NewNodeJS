@@ -22,7 +22,12 @@ const Login = () => {
             localStorage.setItem("token", response.data.token);
             localStorage.setItem("role", response.data.role);
 
-            navigate("/dashboard");
+            if(response.data.role=user){
+                navigate("/user-dashboard");
+            }
+            else{
+                navigate("/admin-dashboard");
+            }
         } catch (error) {
             alert(error.response.data.msg);
         }

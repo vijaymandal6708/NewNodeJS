@@ -7,7 +7,8 @@ const Layout = () => {
       <header>
         <Link to="/signup">Signup | </Link>
         <Link to="/login">Login | </Link>
-        <Link to="/dashboard"> Dashboard</Link>
+        <Link to="/user-dashboard"> UserDashboard | </Link>
+        <Link to="/admin-dashboard"> AdminDashboard</Link>
       </header>
       <main>
         <Outlet></Outlet>

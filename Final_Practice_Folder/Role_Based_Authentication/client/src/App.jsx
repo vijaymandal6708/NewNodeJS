@@ -1,8 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import Signup from "./components/Signup";
-import Dashboard from "./components/Dashboard";
+import UserDashboard from "./components/userDashboard";
 import Login from "./components/Login";
+import AdminDashboard from "./components/AdminDashboard";
 
 
 function App() {
@@ -16,7 +17,8 @@ function App() {
             <Route index element={<Signup/>}></Route>
             <Route path="/signup" element={<Signup/>}></Route>
             <Route path="/login" element={<Login/>}></Route>
-            <Route path="/dashboard" element={<Dashboard/>}></Route>
+            <Route path="/user-dashboard" element={<UserDashboard/>}></Route>
+            <Route path="/admin-dashboard" element={<AdminDashboard/>}></Route>
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect } from 'react'
 
-const Dashboard = () => {
+const UserDashboard = () => {
     
     const token = localStorage.getItem("token");
 
@@ -19,9 +19,9 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2>Dashboard</h2>
+      <h2>UserDashboard</h2>
     </div>
   )
 }
 
-export default Dashboard
+export default UserDashboard
