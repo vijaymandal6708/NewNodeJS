@@ -55,7 +55,7 @@ const userLogin = async (req, res) => {
   }
 };
 
-const authorizeUser = async (req, res) => {
+const getUserDashboard = async (req, res) => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -64,11 +64,13 @@ const authorizeUser = async (req, res) => {
     const token = authHeader.split(" ")[1];
 
     req.user = jwt.verify(token, "vijay@1234");
+
+    
   } catch (error) {}
 };
 
 module.exports = {
   userSignup,
   userLogin,
-  authorizeUser,
+  getUserDashboard,
 };

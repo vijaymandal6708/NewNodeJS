@@ -1,12 +1,12 @@
 import axios from 'axios';
 import React, { useEffect } from 'react'
 
-const UserDashboard = () => {
+const Dashboard = () => {
     
     const token = localStorage.getItem("token");
 
-    const authorizeUser =async()=>{
-       const response = await axios.get("http://localhost:8000/user/authorize-user", {
+    const getDashboard =async()=>{
+       const response = await axios.get("http://localhost:8000/user/dashboard", {
         headers: {
             Authorization:`Bearer ${token}`
         }
@@ -14,7 +14,7 @@ const UserDashboard = () => {
     };
 
     useEffect(()=>{
-        authorizeUser();
+        getDashboard();
     },[]);
 
   return (
@@ -24,4 +24,4 @@ const UserDashboard = () => {
   )
 }
 
-export default UserDashboard
+export default Dashboard
