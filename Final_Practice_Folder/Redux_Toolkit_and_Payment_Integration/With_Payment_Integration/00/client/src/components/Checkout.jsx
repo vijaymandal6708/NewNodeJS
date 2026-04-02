@@ -32,7 +32,7 @@ const Checkout = () => {
             });
 
             const options = {
-                key: "",
+                key: process.env.RAZORPAY_KEY,
                 amount: response.data.amount,
                 currency: "INR",
                 name: "GadgetGalaxy",
