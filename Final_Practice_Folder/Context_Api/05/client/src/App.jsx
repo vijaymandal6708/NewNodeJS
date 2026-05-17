@@ -9,9 +9,14 @@ const products = [
   },
   {
     id: 2,
-    name: "Samsung",
+    name: "Samsung S25",
     price: 60000,
   },
+  {
+    id: 3,
+    name: "Moto Edge 60",
+    price: 40000,
+  }
 ];
 
 const Product = () => {
