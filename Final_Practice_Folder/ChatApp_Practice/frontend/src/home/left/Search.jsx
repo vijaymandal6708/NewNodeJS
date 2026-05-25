@@ -3,7 +3,7 @@ import { IoSearch } from "react-icons/io5";
 
 const Search = () => {
   return (
-    <div className="px-6 py-4">
+    <div className="px-4 py-4">
       <form action="">
         <div className="flex space-x-3">
           <label className="input border-[1px] border-gray-700 bg-slate-900 rounded-b-lg w-[80%]">
