@@ -3,7 +3,7 @@ import User from './User';
 
 const Users = () => {
   return (
-    <div style={{maxHeight:"calc(81vh)"}} className='overflow-y-auto'>
+    <div className='py-2 flex-vijay overflow-y-auto' style={{maxHeight:"calc(84vh - 1vh)"}}>
       <User></User>
       <User></User>
       <User></User>
