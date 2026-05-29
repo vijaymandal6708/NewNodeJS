@@ -39,7 +39,6 @@ const Signup = () => {
       .catch((error)=>{
         if(error.response){
             alert("Error:"+ error.response.data.error);
-            alert("Error:"+ error.response.data.error);
         }
       });
   };
