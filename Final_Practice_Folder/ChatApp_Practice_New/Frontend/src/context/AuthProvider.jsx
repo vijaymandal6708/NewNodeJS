@@ -6,7 +6,7 @@ import { useContext } from "react";
 
 export const AuthContext = createContext();
 
-const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children }) => {
   const initialUserState = Cookies.get("jwt") || localStorage.getItem("messenger");
 
   //parse the user and storing in state

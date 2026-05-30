@@ -2,10 +2,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { useAuth } from "../context/AuthProvider";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
 
-  const [authUser, setAuthUser] = useAuth();
+  const {authUser, setAuthUser} = useAuth();
 
   const {
     register,
@@ -221,9 +222,9 @@ const Signup = () => {
 
             <p>
               Have an Account?
-              <span className="text-blue-500 underline cursor-pointer ml-1">
+              <Link to={"/login"} className="text-blue-500 underline cursor-pointer ml-1">
                 Login
-              </span>
+              </Link>
             </p>
           </div>
         </form>
