@@ -10,13 +10,13 @@ const userGetAllUsers = () => {
         setLoading(true);
       try {
         const token = Cookies.get("jwt");
-        const response = await axios.get("http://localhost:5002/user/getUserProfile", {
+        const response = await axios.get("/api/user/getUserProfile", {
             Credentials:"include",
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        setAllUsers(response.data);
+        setAllUsers(response.data.filteredUsers);
         setLoading(false);
       } catch (error) {
         console.log("Error in userGetAllUsers" + error);
@@ -24,7 +24,7 @@ const userGetAllUsers = () => {
     };
     getUsers()
   }, []);
-  return [allUsers, loading];
+  return {allUsers, loading};
 };
 
 export default userGetAllUsers;

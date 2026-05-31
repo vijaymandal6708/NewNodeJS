@@ -3,25 +3,13 @@ import User from './User';
 import userGetAllUsers from '../../context/userGetAllUsers';
 
 const Users = () => {
-    const [allUsers,loading] = userGetAllUsers();
+    const {allUsers,loading} = userGetAllUsers();
     console.log(allUsers);
   return (
     <div className='py-2 flex-vijay overflow-y-auto' style={{maxHeight:"calc(84vh - 1vh)"}}>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
-      <User></User>
+       {allUsers.map((user,index)=>{
+         return <User key={index} user={user}/>
+       })}
     </div>
   )
 }
