@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthProvider";
 import { Link } from "react-router-dom";
 
 const Login = () => {
-  const {authUser, setAuthUser} = useAuth();
+  const [authUser, setAuthUser] = useAuth();
   const {
     register,
     handleSubmit,

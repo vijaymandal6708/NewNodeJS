@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(initialUserState ? JSON.parse(initialUserState) : undefined,);
   
   return (
-    <AuthContext.Provider value={{authUser, setAuthUser}}>
+    <AuthContext.Provider value={[authUser, setAuthUser]}>
         {children}
     </AuthContext.Provider>
   );
