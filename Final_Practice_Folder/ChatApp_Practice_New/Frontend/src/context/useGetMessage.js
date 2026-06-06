@@ -28,6 +28,7 @@ const useGetMessage = () => {
   }, [selectedConversation, setMessage]);
   return {
     messages,
+    messages,
     loading,
   };
 };
