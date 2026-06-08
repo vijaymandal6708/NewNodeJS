@@ -1,12 +1,9 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useConversation from "../statemanage/useConversation.js";
-import { useEffect } from "react";
 import axios from "axios";
-
 const useGetMessage = () => {
   const [loading, setLoading] = useState(false);
-  const {messages, setMessage, selectedConversation} = useConversation();
+  const { messages, setMessage, selectedConversation } = useConversation();
 
   useEffect(() => {
     const getMessages = async () => {
@@ -14,23 +11,19 @@ const useGetMessage = () => {
       if (selectedConversation && selectedConversation._id) {
         try {
           const res = await axios.get(
-            `/api/message/get/${selectedConversation._id}`,
+            `/api/message/get/${selectedConversation._id}`
           );
-
           setMessage(res.data);
           setLoading(false);
         } catch (error) {
-          console.log("Error in useGetMessage", error);
+          console.log("Error in getting messages", error);
+          setLoading(false);
         }
       }
     };
-    getMessages()
+    getMessages();
   }, [selectedConversation, setMessage]);
-  return {
-    messages,
-    messages,
-    loading,
-  };
+  return { loading, messages };
 };
 
 export default useGetMessage;
