@@ -1,45 +1,62 @@
 import React from "react";
 import Left from "./home/left/Left";
-import {Right} from "./home/right/Right";
-import Logout from "./home/left1/Logout";
+import Right from "./home/right/Right";
 import Signup from "./components/Signup";
 import Login from "./components/Login";
-import Loading from "./components/Loading";
 import { useAuth } from "./context/AuthProvider";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import Logout from "./home/left1/Logout";
 
-const App = () => {
-  const [ authUser, setAuthUser ] = useAuth();
-  //  console.log(authUser);
+import { Navigate, Route, Routes } from "react-router-dom";
+function App() {
+  const [authUser, setAuthUser] = useAuth();
+  console.log(authUser);
   return (
     <>
-      {/* <Loading></Loading> */}
       <Routes>
         <Route
           path="/"
           element={
             authUser ? (
               <div className="flex h-screen">
-                <Logout></Logout>
-                <Left></Left>
-                <Right></Right>
+                <Logout />
+                <Left />
+                <Right />
               </div>
+
+
+            
             ) : (
-              <Navigate to={"/login"}></Navigate>
+              <Navigate to={"/login"} />
             )
           }
-        ></Route>
+        />
         <Route
           path="/login"
-          element={authUser ? <Navigate to={"/"}></Navigate> : <Login />}
-        ></Route>
+          element={authUser ? <Navigate to="/" /> : <Login />}
+        />
         <Route
           path="/signup"
-          element={authUser ? <Navigate to={"/"}></Navigate> : <Signup />}
-        ></Route>
+          element={authUser ? <Navigate to="/" /> : <Signup />}
+        />
       </Routes>
+      <Toaster />
     </>
   );
-};
+}
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

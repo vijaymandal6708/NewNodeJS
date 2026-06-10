@@ -1,45 +1,40 @@
-import { useState } from "react";
-import { Children } from "react";
-import { createContext } from "react";
-import { useAuth } from "./AuthProvider.jsx";
-import { useEffect } from "react";
-import { io } from "socket.io-client";
-import { useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthProvider";
+import io from "socket.io-client";
+const socketContext = createContext();
 
-const SocketContext = createContext();
-
-export const useSocketContext = ()=>{
-    return useContext(SocketContext);
+// it is a hook.
+export const useSocketContext = () => {
+  return useContext(socketContext);
 };
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
-  const [onlineUsers,setOnlineUsers] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const [authUser] = useAuth();
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("http://localhost:5002/", {
+      const socket = io("http://localhost:5002", {
         query: {
           userId: authUser.user._id,
         },
       });
       setSocket(socket);
-      socket.on("getonline", (users)=>{
+      socket.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
-        console.log("Socket disconnected");
       });
-      return ()=> socket.close();
-    }else{
-        if(socket){
-            socket.close();
-            setSocket(null);
-        }
+      return () => socket.close();
+    } else {
+      if (socket) {
+        socket.close();
+        setSocket(null);
+      }
     }
-  },[authUser]);
+  }, [authUser]);
   return (
-    <SocketContext.Provider value={{socket,onlineUsers}}>
-        {children}
-    </SocketContext.Provider>
-  )
+    <socketContext.Provider value={{ socket, onlineUsers }}>
+      {children}
+    </socketContext.Provider>
+  );
 };

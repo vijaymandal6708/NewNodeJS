@@ -1,34 +1,25 @@
 import mongoose from "mongoose";
-import User from "./user.model.js";
 
-const messageSchema = new mongoose.Schema({
+const messageSchema = new mongoose.Schema(
+  {
     senderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     receiverId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     message: {
-        type: String,
-        required: true,
-        maxLength: 1000,
-        trim: true,
-        validate: [
-            {
-                validator: (value) => value.length > 0,
-                message: "Message cannot be empty",
-            }
-        ],
+      type: String,
+      required: true,
     },
-    createdAt: {type:Date, default:Date.now},
-},{
-    timestamps:true, //createdAt and updatedAt
-});
+  },
+  { timestamps: true }
+);
 
-const Message = mongoose.model("Message", messageSchema);
+const Message = mongoose.model("message", messageSchema);
 
 export default Message;
