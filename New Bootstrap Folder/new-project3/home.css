@@ -1,0 +1,187 @@
+*{
+  padding: 0;
+  margin: 0;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+nav{
+  /* border: 1px solid black; */
+  padding: 10px 12.3vw;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* padding: 10px 0; */
+}
+
+.logo-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.e-learning-logo{
+  height: 40px;
+  width: 46px;
+  margin-right: 10px;
+}
+
+.brand-title{
+  font-weight: 700;
+  color: #1d3266;
+  font-size: 16.5px;
+}
+
+.primary-btn{
+  /* border: 1px solid black; */
+  height: 52px;
+  width: 146px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #5b4dff, #8b5cf6 55%, #2f9bff);
+  border-radius: 12px;
+  margin-right: 1px;
+  padding-bottom: 2px;
+  letter-spacing: 0px;
+}
+
+.primary-btn a{
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 16.4px;
+}
+
+.hero-container{
+  padding: 8.5vh 12.4vw;
+  background-color: #b3ccfd4f;
+  border: 1px solid black;
+  color: black;
+  max-width: 100%;
+  height: 500px;
+  display: flex;
+  gap: 60px;
+}
+
+/* ---- left-container  ---- */
+
+.left-container{
+  border: 1px solid black;
+  max-width: 50%;
+  height: 515px;
+  letter-spacing: 0.2px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+}
+
+.enterprise-learning-platform{
+  height: 32px;
+  width: 225px;
+  color: #084ac6;
+  border: 1px solid #084ac685;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 2px;
+}
+
+.corporate-learning-heading{
+  margin-top: 5px;
+  font-size: 54px;
+  line-height: 1.05;
+  /* margin-bottom: 20px; */
+}
+
+.lead{
+  line-height: 26px;
+  margin-top: 7px;
+  color: #4a5f88;
+  font-size: 18px;
+}
+
+.book-a-free-demo-container{
+  margin-top: 8px;
+  width: 185px;
+}
+
+.flex-container{
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.trusted-users-text{
+  margin-top: 5px;
+  display: inline-flex;
+  height: 32px;
+  width: 205px;
+  color: #2a4782;
+  border: 1px solid #91a9d585;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 2px;
+  padding: 3px;
+  background: linear-gradient(135deg,#eef4ff,#e8fff6);
+}
+
+.bottom-container{
+  display: grid;
+  grid-template-columns: auto auto;
+  margin-top: 6px;
+  gap: 8px;
+}
+
+.hero-point{
+  margin-top: 4px;
+  height: 65px;
+  width: 285px;
+  color: #2a4782;
+  border: 1px solid #91a9d555;
+  font-size: 15.5px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-align: start;
+  padding-bottom: 2px;
+  padding: 8px 13px;
+  background: #ffffff90;
+  box-sizing: border-box;
+  letter-spacing: 0px;
+}
+
+
+/*  ----- right-container ------  */
+
+.right-container{
+  align-self: center;
+  box-sizing: border-box;
+  padding: 10px;
+  height: 348px;
+  max-width: 60%;
+  /* border: 1px solid rgba(128, 128, 128, 0.53); */
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+}
+.right-container img{
+  height: 325px;
+  border: 1px solid rgba(128, 128, 128, 0.53);
+  border-radius: 10px;
+  
+}
+
+
