@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="add-to-do-container">
+        <h1>To Do List</h1>
+        <label for="">Enter work to do</label>
+        <input id="task-name" type="text" name="work-name"/>
+        <label for="">Enter When to complete the task</label>
+        <input id="completion-date" type="date" name="work-completion-date"/>
+        <button id="submit" type="submit">Add Task</button>
+      </div>
+      <div class="old-to-do-list">
+        <ul id="old-task" value="taskList"></ul>
+      </div>
+    </div>
+  </body>
+  <script src="script.js"></script>
+</html>

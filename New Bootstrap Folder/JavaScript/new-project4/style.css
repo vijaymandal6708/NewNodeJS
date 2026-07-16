@@ -1,0 +1,34 @@
+.container{
+  height: 70vh;
+  margin: 10vh 35vw;
+  display: flex;
+  /* align-items: center; */
+  justify-content: flex-start;
+  flex-direction: column;
+  /* background-color: black; */
+  border: 1px solid black;
+  
+}
+
+.add-to-do-container{
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-bottom: 25px;
+}
+
+.old-to-do-list{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* padding: 40px auto; */
+}
+
+ul{
+  margin-left: -20px;
+  list-style-type: none;
+}
