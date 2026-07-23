@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- Assuming your style.css exists -->
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <!-- Logo Section -->
+        <a class="navbar-brand" href="#">
+          <img
+            class="nal-academy-logo"
+            src="https://www.nseacademy.com/images/NSE_academy_logo.jpg"
+            alt="Logo"
+            style="height: 40px"
+          />
+          <img
+            class="ncfm-pro-logo"
+            src="https://www.nseacademy.com/NCFM-PRO/photos/nse_images/ncfmpropng.png"
+            alt="Logo"
+            style="height: 40px"
+          />
+        </a>
+
+        <!-- Toggle Button -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Collapsible Menu -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <div class="dropdown">
+                <button
+                  class="btn dropdown-toggle"
+                  type="button"
+                  id="dropdownMenuButton1"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Pro Courses
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li>
+                    <a class="dropdown-item bg-body-secondary" href="#"
+                      >Data Analytics & Business Intelligence</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-body-secondary" href="#"
+                      >Blockchain for Financial Technology</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-body-secondary" href="#"
+                      >Environmental, Social and Governance</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-body-secondary" href="#"
+                      >Enterprise risk management</a
+                    >
+                  </li>
+                  <li>
+                    <a class="dropdown-item bg-body-secondary" href="#"
+                      >Cyber Security</a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">FAQs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#"
+                >Contact us</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Login</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- nav end here -->
+    <main>
+      <div class="hero-section">
+        <div class="hero-box">
+          <div class="left-container">
+            <div class="slider-container">
+              <div class="slider">
+                <div class="slides">
+                  <img
+                    src="/images/Blockchain _  Practical Applications.png"
+                    class="slide active"
+                  />
+                  <img
+                    src="/images/Blockchain _  Practical Applications.png"
+                    class="slide"
+                  />
+                  <img
+                    src="/images/Blockchain _  Practical Applications.png"
+                    class="slide"
+                  />
+                </div>
+
+                <div class="bottom-center">
+                  <h3 class="luxury-heading">Discover the magic of Japan</h3>
+                  <p class="luxury-subtitle">
+                    From ancient temples to neon-lit cities
+                  </p>
+
+                  <div class="buttons">
+                    <button class="btn primary">Explore Tour</button>
+                    <button class="btn secondary">Enquiry</button>
+                  </div>
+
+                  <div class="indicators">
+                    <span class="dot active" onclick="showSlide(0)"></span>
+                    <span class="dot" onclick="showSlide(1)"></span>
+                    <span class="dot" onclick="showSlide(2)"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="right-container">
+            <div class="box-container">
+              <h3>Blockchain: Practical Application</h3>
+              <img
+                src="https://www.nseacademy.com/NCFM-PRO/photos/nse_images/nse_line.jpg"
+                alt=""
+              />
+              <p>
+                Unlock the Future of Business with our Blockchain: Practical
+                Applications Premium Program, a cutting-edge initiative designed
+                exclusively for visionary aspirants. Revolutionize the way you
+                conduct business, streamline operations, and enhance your
+                competitive edge with the power of blockchain technology. This
+                premium program offers a comprehensive and immersive learning
+                experience, empowering you to fully leverage the potential of
+                blockchain for your organization.
+              </p>
+              <div class="button-container">
+                <button type="button" class="btn btn-primary">Apply Now</button>
+                <button type="button" class="btn btn-light border border-2">
+                  Download Brochure<img
+                    src="/images/downloads.png"
+                    style="height: 15px; margin-top: -5px; padding: 0 5px"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="script.js"></script>
+  </body>
+</html>

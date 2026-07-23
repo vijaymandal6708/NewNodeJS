@@ -3,10 +3,18 @@
   padding: 0;
 }
 
+.navbar {
+  padding: 0 20px;
+  height: 80px;
+  /* border-bottom: 1px solid black; */
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.223);
+}
+
 .nal-academy-logo {
   height: 5vh;
   border-right: 1px solid black;
   padding-right: 12px;
+  padding-left: 25px;
 }
 
 .ncfm-pro-logo {
@@ -15,45 +23,63 @@
   margin-left: 8px;
 }
 
-.navbar {
-  height: 80px;
-  /* border-bottom: 1px solid black; */
-  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.223);
-}
-
 .hero-container {
-  background-image: url("background.png");
+  /* background-image: url("background.png");
   background-repeat: no-repeat;
   height: 88vh;
-  border: 1px solid rgba(128, 128, 128, 0.16);
+  width: 100vw;
+  border: 1px solid rgba(128, 128, 128, 0.16); */
+
+    background-image: url('background.png');
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    width: 100vw;
+    height: auto; /* Removes the fixed height */
+    aspect-ratio: 16 / 7.4;
+    border: 1px solid rgba(128, 128, 128, 0.16);
 }
 
 .right-container {
   /* border: 1px solid black; */
-  margin-left: 800px;
-  margin-right: 80px;
-  margin-top: 40px;
+  margin-left: 52vw;
+  margin-right: 0vw;
+  margin-top: 5vh;
+}
+
+.right-container p{
+  font-size: calc(0.5vw + 8px);
+  text-align: justify;
 }
 
 .box-container {
   padding: 20px;
-  margin-right: 50px;
+  margin-right: 3.5vw;
 }
 
 .website-heading {
-  font-size: 48px;
+  font-size: calc(3vw + 8px);
   font-weight: bold;
 }
 
 .website-heading-span {
   color: rgb(242, 114, 67);
-  font-size: 48px;
+  font-size: calc(3vw + 8px);
   font-weight: bold;
 }
 
 .option-container {
   display: flex;
-  gap: 60px;
+  gap: 5vw;
+}
+
+.option-container h6{
+  font-size: calc(0.7vw + 5px);
+}
+
+.option-container p{
+  margin-top: -8px;
+  font-size: calc(0.7vw + 5px);
 }
 
 .options {
@@ -66,14 +92,14 @@
 }
 
 i {
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 5px;
+  padding: 0.8vw;
+  border-radius: 0.6vw;
+  margin-bottom: 0.2vw;
 }
 
 .first-icon {
-  color: blue;
-  background-color: rgba(0, 0, 255, 0.136);
+  color: white;
+  background-color: rgb(42, 60, 130);
 }
 
 .second-icon {
@@ -86,17 +112,38 @@ i {
   background-color: rgba(22, 204, 86, 0.267);
 }
 
+.button-container{
+  display: flex;
+}
+
+.mybutton1{
+  height: 2.7vw;
+  width: calc(5vw + 40px);
+  margin-right: 1vw;
+  font-size: calc(0.7vw + 4px) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mybutton2{
+  height: 2.7vw;
+  width: calc(7vw + 60px);
+  font-size: calc(0.7vw + 4px) !important;
+  /* padding-top: -0.9vw !important; */
+}
+
 .bottom-box {
-  width: 70vw;
-  margin-left: -600px;
+  width: 80vw;
   display: flex;
   height: 80px;
   gap: 30px;
-  padding: 0 50px;
+  padding: 0 70px;
   /* border: 1px solid black; */
+  
   line-height: 1;
-  margin-top: 55px;
-  padding: 10px;
+  margin: 20px auto;
+  /* padding: 10px; */
   background-color: white;
   border-radius: 30px;
   box-shadow: 5px 5px 5px 5px rgba(128, 128, 128, 0.422);
@@ -125,7 +172,7 @@ i {
   padding: 10px;
   border-radius: 50%;
   margin-bottom: 5px;
-  color: blue;
+  color: rgb(42, 60, 130);
   background-color: rgba(0, 0, 255, 0.177);
   max-width: 38px;
 }
@@ -211,15 +258,18 @@ i {
 }
 
 .card {
-  box-shadow: 3px 3px 3px 5px rgba(67, 57, 208, 0.092);
+  box-shadow: 3px 3px 3px 5px rgba(211, 211, 211, 0.458);
   /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
   border-radius: 15px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .card:hover {
-  box-shadow: 3px 3px 3px 5px rgba(0, 0, 255, 0.248);
-  /* transition-delay: 1s; */
+  box-shadow: 3px 3px 3px 5px rgba(1, 1, 38, 0.2);
+  transform: scale(1.02);
 }
+
+
 
 /* ------------- course-offering-container ------------- */
 
@@ -269,6 +319,28 @@ i {
 .benefits-container h2{
   text-align: center;
   color: rgb(42, 60, 130);
+}
+
+.benefits-card-container{
+  margin-top: 25px;
+  display: flex;
+  /* flex-direction: column; */
+  flex-wrap: wrap;
+}
+
+.benefits-card{
+  width: 25vw;
+  display: flex;
+  height: 5vh;
+}
+
+.benefits-card i {
+  margin-top: -11px;
+  font-size: 20px;
+}
+
+.benefits-card p{
+  font-weight: 600;
 }
 
 /* --------------- test details container --------------- */
@@ -391,3 +463,16 @@ footer {
 .right-container3 img {
   height: 30px;
 }
+
+
+@media (min-width:768px) and (max-width:1200px){
+  .right-container {
+  /* border: 1px solid black; */
+  margin-left: 48vw;
+  margin-right: 0vw;
+  margin-top: 5vh;
+}
+}
+
+
+
